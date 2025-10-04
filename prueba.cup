@@ -1,0 +1,187 @@
+import java_cup.runtime.*;
+
+parser code {: 
+    import java_cup.runtime.*;
+:}
+
+action code {: 
+    
+:}
+
+// TERMINALES
+terminal String left_parenthesis;
+terminal String right_parenthesis;
+terminal String wall_comment;
+terminal String left_exclamation;
+terminal String right_exclamation;
+terminal String left_block;
+terminal String right_block;
+
+terminal String plus_operator;
+terminal String minus_operator;
+terminal String multiplication_operator;
+terminal String division_operator;
+terminal String int_division_operator;
+terminal String modulo_operator;
+terminal String power_operator;
+terminal String increment_operator;
+terminal String decrement_operator;
+terminal String assignment_operator;
+
+terminal String digit1to9_literal;
+terminal String decimal_digit_literal;
+terminal String zero_literal;
+terminal String dot_literal;
+terminal String letter_or_underscore;
+terminal String identifier_char;
+
+terminal String int_keyword;
+terminal String float_keyword;
+terminal String bool_keyword;
+terminal String char_keyword;
+terminal String string_keyword;
+terminal String void_keyword;
+terminal String principal_keyword;
+terminal String let_keyword;
+terminal String input_keyword;
+terminal String output_keyword;
+terminal String comma_keyword;
+terminal String loop_keyword;
+terminal String exit_when_keyword;
+terminal String end_loop_$_keyword;
+terminal String for_keyword;
+terminal String step_keyword;
+terminal String to_keyword;
+terminal String downto_keyword;
+terminal String do_keyword;
+terminal String return_keyword;
+terminal String break_keyword;
+terminal String greater_operator;
+terminal String less_operator;
+terminal String greater_equal_operator;
+terminal String less_equal_operator;
+terminal String equal_operator;
+terminal String not_equal_operator;
+terminal String delimiter;
+terminal String line_break;
+terminal String or_operator;
+terminal String and_operator;
+terminal String not_operator;
+terminal String decide_of_keyword;
+terminal String elseif_keyword;
+terminal String else_keyword;
+terminal String single_quote;
+terminal String double_quote;
+
+terminal String type;
+terminal String int_literal;
+terminal String float_literal;
+terminal String bool_literal;
+terminal String char_literal;
+terminal String string_literal;
+terminal String literal;
+terminal String identifier;
+
+// NO TERMINALES
+
+// Expresiones aritméticas
+non terminal unary_negative;
+non terminal number_literal;
+non terminal postfix_expression;
+non terminal postfix_expressionA;
+non terminal arithmetic_expression;
+non terminal term;
+non terminal termA;
+non terminal power;
+non terminal factor;
+non terminal arithmetic_operands;
+
+// Expresiones lógicas y relacionales
+non terminal condition;
+non terminal conditionCont;
+non terminal condition_simple;
+non terminal relational_expression;
+non terminal relational_operator_numeric;
+non terminal equality_expression;
+non terminal equality_operand;
+non terminal equality_operator;
+non terminal logical_operator;
+non terminal conditionR;
+non terminal equality_condition;
+non terminal relational_condition;
+non terminal simple_condition;
+non terminal multiple_condition;
+non terminal not_condition;
+
+// Declaraciones y sentencias
+non terminal declaration;
+non terminal reassignment;
+non terminal array_declaration;
+non terminal assign_elements_array;
+non terminal array_access;
+non terminal statement;
+non terminal statements;
+non terminal block;
+
+// Bucles y condicionales
+non terminal loop;
+non terminal for_loop;
+non terminal break_statement;
+non terminal decide_of;
+non terminal else_if;
+non terminal else_part;
+
+// Funciones
+non terminal function;
+non terminal functions;
+non terminal params;
+non terminal param;
+non terminal return_statement;
+non terminal function_call;
+non terminal args;
+
+// Programa principal
+non terminal principal;
+non terminal global_variables;
+non terminal program;
+
+// El start siempre después de los terminales y no terminales
+start with program;
+
+// REGLAS DE PRODUCCIÓN - tener cuidado aqui probar probar por regla ararar
+
+literal ::= int_literal | float_literal | bool_literal | char_literal | string_literal;
+
+unary_negative ::= minus_operator number_literal;
+number_literal ::= int_literal | float_literal;
+
+postfix_expression ::= identifier postfix_expressionA;
+postfix_expressionA ::= increment_operator | decrement_operator;
+
+arithmetic_expression ::= arithmetic_expression plus_operator term | arithmetic_expression minus_operator term | term;
+
+term ::= term termA power | power;
+termA ::= multiplication_operator | division_operator |  int_division_operator | modulo_operator;
+
+power ::= factor power_operator power | factor;
+factor ::= left_parenthesis arithmetic_expression right_parenthesis | arithmetic_operands;
+arithmetic_operands ::= int_literal | float_literal | identifier | unary_negative | postfix_expression | array_access | function_call;
+
+condition ::= condition_simple conditionCont;
+conditionCont ::= logical_operator condition_simple conditionCont | /* empty */;
+
+relational_expression ::= arithmetic_expression relational_operator_numeric arithmetic_expression;
+
+condition_simple ::= relational_expression | bool_literal | equality_expression | function_call | identifier | left_parenthesis condition right_parenthesis | not_condition;
+
+relational_operator_numeric ::= greater_operator | less_operator | greater_equal_operator | less_equal_operator;
+
+equality_operand ::= arithmetic_expression | bool_literal | identifier;
+
+equality_expression ::= equality_operand equality_operator equality_operand;
+
+equality_operator ::= equal_operator | not_equal_operator;
+
+logical_operator ::= or_operator | and_operator;
+
+not_condition ::= not_operator condition_simple;
