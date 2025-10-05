@@ -11,10 +11,6 @@ parser code {:
     }
 :};
 
-terminal PRINCIPAL, INT;
-terminal String ID;
-
-//PROYECTO
 // TERMINALES
 terminal String left_parenthesis;
 terminal String right_parenthesis;
@@ -104,9 +100,11 @@ non terminal factor;
 non terminal arithmetic_operands;
 
 // Expresiones lógicas y relacionales
-non terminal condition;
-non terminal conditionA;
-non terminal condition_simple;
+non terminal logical_expresion;
+non terminal logical_expresion_or;
+non terminal logical_expresion_and;
+non terminal logical_expresion_operands;
+non terminal logical_factor;
 non terminal relational_expression;
 non terminal relational_operator_numeric;
 non terminal relational_operator;
@@ -122,6 +120,7 @@ non terminal multiple_condition;
 non terminal not_condition;
 
 // Declaraciones y sentencias
+non terminal declaration_values;
 non terminal declaration;
 non terminal reassignment;
 non terminal array_declaration;
@@ -173,12 +172,6 @@ non terminal blockA;
 non terminal paramsA;
 non terminal argsA;
 non terminal global_variablesA;
-non terminal numeric_literal;
-non terminal array_element_literal;
-non terminal text_literal;
-non terminal args_types;
-non terminal arithmetic_operands_literal;
-non terminal programa, declaracion;
 
 // Por úlitmo un orden precendencia para el cup
 precedence left or_operator; // ~
@@ -193,211 +186,92 @@ precedence right increment_operator, decrement_operator; // ++, --
 //ESTOS LOS PODEMOS REVISAR PARA VER SI LOS UNARIOS TAMBIÉN VAN
 
 
+
 // El start siempre después de los terminales y no terminales
 start with program;
 
 
-// REGLAS DE PRODUCCIÓN - tener cuidado aqui probar probar por regla ararar
-
-
-
-// Aquí van operaciones aritmeticas 
-numeric_literal::= int_literal | float_literal;
-text_literal ::= char_literal | string_literal;
-unary_negative ::= minus_operator int_literal | minus_operator float_literal;
-
-postfix_expression ::= identifier increment_operator | identifier decrement_operator;
-
-
-arithmetic_expression ::= arithmetic_expression plus_operator term | arithmetic_expression minus_operator term | term;
-
-term ::= term multiplication_operator power | term division_operator power | term int_division_operator power | term modulo_operator power | power;
-
-power ::= factor power_operator power | factor;
-
-factor ::= left_parenthesis arithmetic_expression right_parenthesis | arithmetic_operands;
-
-arithmetic_operands ::= arithmetic_operands_literal | unary_negative | postfix_expression | array_access | function_call;
-arithmetic_operands_literal ::= numeric_literal | identifier;
-// SON DE PRUEBA LOS DOS POR AQUELLO 
-array_element ::= array_element_literal | arithmetic_expression;
-array_element_literal ::= int_literal | char_literal;
-array_elements_list ::= array_element | array_elements_list comma_keyword array_element;
-
-else_if_list ::= /* empty */ | else_if | else_if_list else_if;
-
-loop_body ::= statements | break_statement | loop_body statements | loop_body break_statement;
-
-// Hasta aquí van operaciones aritmeticas
-
-
-//Aquí empiezan las operaciones lógicas 
-condition ::= condition_simple conditionA;
-conditionA ::= logical_operator condition_simple conditionA | /* empty */;
-
-relational_expression ::= arithmetic_expression relational_operator_numeric arithmetic_expression;
-
-condition_simple ::= relational_expression | bool_literal | equality_expression | function_call | identifier | left_parenthesis condition right_parenthesis| not_condition;
-
-relational_operator_numeric ::= greater_operator | less_operator | greater_equal_operator | less_equal_operator;
-
-equality_expression ::= arithmetic_expression equality_operator arithmetic_expression | arithmetic_expression equality_operator bool_literal | arithmetic_expression equality_operator identifier
-    | bool_literal equality_operator arithmetic_expression | bool_literal equality_operator bool_literal | bool_literal equality_operator identifier
-    | identifier equality_operator arithmetic_expression | identifier equality_operator bool_literal| identifier equality_operator identifier;
-
-
-logical_operator ::= or_operator | and_operator;
-
-not_condition ::= not_operator condition_simple;
-//Hasta aquí van las operaciones lógicas
-
-
-//Aquí empiezan las operaciones relacionales 
-conditionR ::= equality_condition;
-
-equality_condition ::= relational_condition equality_conditionA;
-equality_conditionA ::= equality_operator relational_condition equality_conditionA | /* empty */;
-
-relational_condition ::= simple_condition relational_conditionA;
-relational_conditionA ::= relational_operator simple_condition relational_conditionA | /* empty */;
-
-simple_condition ::= declaration | numeric_literal | left_parenthesis conditionR right_parenthesis;
-
-relational_operator ::= greater_operator | less_operator | greater_equal_operator | less_equal_operator;
-equality_operator ::= equal_operator | not_equal_operator;
-
-//Hasta aquí las operaciones relacionales 
-
-
-declaration ::= let_keyword type identifier assignment_operator int_literal delimiter 
-| let_keyword type identifier assignment_operator float_literal delimiter
-| let_keyword type identifier assignment_operator bool_literal delimiter
-| let_keyword type identifier assignment_operator char_literal delimiter
-| let_keyword type identifier assignment_operator string_literal delimiter
-| let_keyword type identifier assignment_operator identifier delimiter
-| let_keyword type identifier assignment_operator array_access delimiter
-| let_keyword type identifier assignment_operator arithmetic_expression delimiter 
-| let_keyword type identifier assignment_operator condition delimiter
-| let_keyword type identifier assignment_operator conditionR delimiter
-| let_keyword type identifier delimiter;
-
-reassignment ::= identifier  assignment_operator int_literal delimiter
-| identifier  assignment_operator float_literal delimiter
-| identifier  assignment_operator bool_literal delimiter
-| identifier  assignment_operator char_literal delimiter
-| identifier  assignment_operator string_literal delimiter
-| identifier assignment_operator identifier delimiter  //Esto podría ser ambiguo
-| identifier assignment_operator array_access delimiter
-| identifier assignment_operator arithmetic_expression delimiter
-| identifier assignment_operator condition delimiter
-| identifier assignment_operator conditionR delimiter;
-
-
-//Arreglos
-
-array_declaration ::= let_keyword char_keyword identifier left_block int_literal right_block delimiter
-| let_keyword int_keyword identifier left_block int_literal right_block delimiter
-| let_keyword char_keyword identifier left_block int_literal right_block assignment_operator left_block array_elements_list right_block delimiter
-| let_keyword int_keyword identifier left_block int_literal right_block assignment_operator left_block array_elements_list right_block delimiter;
-
-
-assign_elements_array ::= identifier left_block int_literal right_block assignment_operator int_literal delimiter
-| identifier left_block int_literal right_block assignment_operator char_literal delimiter
-| identifier left_block int_literal right_block assignment_operator identifier delimiter
-| identifier left_block int_literal right_block assignment_operator arithmetic_expression delimiter;
-
-
-array_access ::= identifier left_block int_literal right_block;
-
-
-//Todas las sentencias y bloques de código posibles
-block ::= left_block blockA right_block;
-blockA ::= statements blockA | /* empty */;
-
-statements ::= statements statement | statement;
-statement ::= declaration | reassignment | array_declaration | assign_elements_array | input_statement | output_statement | decide_of | loop | for_loop | return_statement;
-
-
-//Funciones input y output
-input_statement ::= input_keyword identifier delimiter;
-output_statement ::= output_keyword identifier delimiter
-| output_keyword int_literal delimiter
-| output_keyword float_literal delimiter
-| output_keyword bool_literal delimiter
-| output_keyword string_literal delimiter
-| output_keyword char_literal delimiter;
-
-
-//Decide of
-decide_of ::= decide_of_keyword left_parenthesis multiple_condition right_parenthesis block
-| decide_of_keyword left_parenthesis multiple_condition right_parenthesis block else_if_list
-| decide_of_keyword left_parenthesis multiple_condition right_parenthesis block else_part
-| decide_of_keyword left_parenthesis multiple_condition right_parenthesis block else_if_list else_part;
-else_if ::= elseif_keyword left_parenthesis multiple_condition right_parenthesis block;
-else_part ::= else_keyword block;
-multiple_condition ::= conditionR | condition;
-
-//LOOP
-loop ::= loop_keyword loop_body exit_when_keyword multiple_condition delimiter end_loop_$_keyword;
-break_statement ::= break_keyword delimiter;
-
-//FOR
-for_loop ::= for_keyword declaration step_keyword int_literal to_keyword int_literal do_keyword left_block loop_body right_block
-| for_keyword declaration step_keyword int_literal to_keyword float_literal do_keyword left_block loop_body right_block
-| for_keyword declaration step_keyword int_literal downto_keyword int_literal do_keyword left_block loop_body right_block
-| for_keyword declaration step_keyword int_literal downto_keyword float_literal do_keyword left_block loop_body right_block
-| for_keyword declaration step_keyword float_literal to_keyword int_literal do_keyword left_block loop_body right_block
-| for_keyword declaration step_keyword float_literal to_keyword float_literal do_keyword left_block loop_body right_block
-| for_keyword declaration step_keyword float_literal downto_keyword int_literal do_keyword left_block loop_body right_block
-| for_keyword declaration step_keyword float_literal downto_keyword float_literal do_keyword left_block loop_body right_block;
-
-
-//FUNCIONES
-function ::= type identifier left_parenthesis right_parenthesis block | type identifier left_parenthesis params right_parenthesis block;
-
-functions ::= /* empty */ | function | functions function;
-
-
-params ::= param paramsA ;
-paramsA ::= comma_keyword param paramsA | /* empty */ ;
-param ::= type identifier;
-
-return_statement ::= return_keyword int_literal delimiter 
-| return_keyword float_literal delimiter 
-| return_keyword bool_literal delimiter 
-| return_keyword char_literal delimiter 
-| return_keyword string_literal delimiter 
-| return_keyword identifier delimiter
-| return_keyword array_access delimiter
-| return_keyword arithmetic_expression delimiter
-| return_keyword condition delimiter
-| return_keyword conditionR delimiter
-| return_keyword delimiter;
-
-
-function_call ::= identifier left_parenthesis args right_parenthesis 
-| identifier left_parenthesis right_parenthesis;
-
-args ::= arg argsA ;
-arg ::= args_types | identifier | arithmetic_expression | array_access ;
-args_types ::= numeric_literal | text_literal | bool_literal;
-
-numeric_literal::= int_literal | float_literal;
-text_literal ::= char_literal | string_literal;
-argsA ::= comma_keyword arg argsA | /* empty */ ;
-
-
-// PROGRAMA FINAL 
-principal ::= void_keyword principal_keyword block;
-global_variables ::= global_variablesA;
-
-
-global_variablesA ::= /* empty */  | declaration global_variablesA | array_declaration global_variablesA;
-
-program ::= global_variables principal functions | global_variables functions principal | global_variables functions principal functions;
-
-program ::= PRINCIPAL:p declaracion:d
-    {: System.out.println("✓ Programa reconocido correctamente"); :};
-
-declaracion ::= INT:i ID:id
-    {: System.out.println("✓ Declaracion: int " + id); :};
+//Expresiones aritméticas
+unary_negative ::= minus_operator int_literal
+                |  minus_operator float_literal
+                ;
+
+postfix_expression ::= identifier increment_operator
+                    |  identifier decrement_operator
+                    ;
+
+arithmetic_expression ::= arithmetic_expression plus_operator term
+                       |  arithmetic_expression minus_operator term
+                       |  term
+                       ;
+
+term ::= term multiplication_operator power
+      |  term division_operator power
+      |  term int_division_operator power
+      |  term modulo_operator power
+      |  power
+      ;
+
+power ::= factor power_operator power
+       |  factor
+       ;
+
+factor ::= left_parenthesis arithmetic_expression right_parenthesis
+        |  arithmetic_operands
+        ;
+
+arithmetic_operands ::= int_literal
+                     |  float_literal
+                     |  identifier
+                     |  unary_negative
+                     |  postfix_expression
+                     |  array_access
+                     |  function_call
+                     ;
+
+// Expresiones logicas and, or y negación
+logical_expresion ::= logical_expresion_or;
+
+logical_expresion_or ::= logical_expresion_or or_operator logical_expresion_and
+            |  logical_expresion_and
+            ;
+
+logical_expresion_and ::= logical_expresion_and and_operator logical_expresion_operands
+             |  logical_expresion_operands
+             ;
+
+logical_expresion_operands ::= not_operator logical_factor
+                |  relational_expression
+                |  bool_literal
+                |  left_parenthesis logical_expresion right_parenthesis
+                ;
+
+//Expresiones relacionales
+relational_expression ::= arithmetic_expression greater_operator arithmetic_expression
+            |  arithmetic_expression less_operator arithmetic_expression
+            |  arithmetic_expression greater_equal_operator arithmetic_expression
+            |  arithmetic_expression less_equal_operator arithmetic_expression
+            |  arithmetic_expression equal_operator arithmetic_expression
+            |  arithmetic_expression not_equal_operator arithmetic_expression
+            ;
+
+//Declaraciones
+declaration_values ::= arithmetic_expression | logical_expresion;
+
+declaration ::= let_keyword int_keyword identifier delimiter
+             |  let_keyword float_keyword identifier delimiter
+             |  let_keyword bool_keyword identifier delimiter
+             |  let_keyword char_keyword identifier delimiter
+             |  let_keyword string_keyword identifier delimiter
+             |  let_keyword int_keyword identifier assignment_operator declaration_values delimiter
+             |  let_keyword float_keyword identifier assignment_operator declaration_values delimiter
+             |  let_keyword bool_keyword identifier assignment_operator declaration_values delimiter
+             |  let_keyword char_keyword identifier assignment_operator declaration_values delimiter
+             |  let_keyword string_keyword identifier assignment_operator declaration_values delimiter
+             ;
+
+
+//Reasignación
+reassignment ::= identifier assignment_operator declaration_values delimiter;
+
+program ::= declaration | reassignment;

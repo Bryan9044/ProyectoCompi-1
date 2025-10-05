@@ -45,16 +45,16 @@ public class JflexCup {
     public static void generateFiles()throws Exception{
         
         //Cambiar a ruta relativa
-        String rutaLexerEliminar = "C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/src/codigo/Lexer.java";
-        String rutaLexerCrear = "C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/src/codigo/Lexer.flex";
+        String rutaLexerEliminar = "C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/src/codigo/Lexer.java";
+        String rutaLexerCrear = "C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/src/codigo/Lexer.flex";
         
-        String rutaOriginalSym = "C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/sym.java";
-        String rutaOriginalParser = "C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/parser.java";
+        String rutaOriginalSym = "C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/sym.java";
+        String rutaOriginalParser = "C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/parser.java";
         
-        String rutaMoverParser ="C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/src/codigo/parser.java";
-        String rutaMoverSym = "C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/src/codigo/sym.java";
+        String rutaMoverParser ="C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/src/codigo/parser.java";
+        String rutaMoverSym = "C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/src/codigo/sym.java";
              
-        String rutaParserCrear = "C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/src/codigo/parser.cup";
+        String rutaParserCrear = "C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/src/codigo/parser.cup";
         
         //Borar los archivos
         deleteFile(rutaLexerEliminar);
