@@ -72,18 +72,18 @@ terminal String elseif_keyword;
 terminal String else_keyword;
 terminal String single_quote;
 terminal String double_quote;
-
-terminal String type;
 terminal String int_literal;
 terminal String float_literal;
 terminal String bool_literal;
 terminal String char_literal;
 terminal String string_literal;
-terminal String literal;
 terminal String identifier;
+terminal String true_keyword;
+terminal String false_keyword;
 
 // NO TERMINALES
-
+non terminal type;
+non terminal literal;
 // Expresiones aritméticas
 non terminal unary_negative;
 non terminal number_literal;
@@ -98,10 +98,11 @@ non terminal arithmetic_operands;
 
 // Expresiones lógicas y relacionales
 non terminal condition;
-non terminal conditionCont;
+non terminal conditionA;
 non terminal condition_simple;
 non terminal relational_expression;
 non terminal relational_operator_numeric;
+non terminal relational_operator;
 non terminal equality_expression;
 non terminal equality_operand;
 non terminal equality_operator;
@@ -123,6 +124,10 @@ non terminal statement;
 non terminal statements;
 non terminal block;
 
+// Funciones input y output
+non terminal input_statement;
+non terminal output_statement;
+
 // Bucles y condicionales
 non terminal loop;
 non terminal for_loop;
@@ -130,6 +135,15 @@ non terminal break_statement;
 non terminal decide_of;
 non terminal else_if;
 non terminal else_part;
+
+
+non terminal array_element;        // de un elemento
+non terminal array_elements_list;  // de una lista de elementos SON DE PRUEBA AMBOS 
+
+non terminal else_if_list; //PRUEBA
+non terminal loop_body; // PRUEBA
+non terminal arg;   // PRUEBA
+
 
 // Funciones
 non terminal function;
@@ -145,43 +159,208 @@ non terminal principal;
 non terminal global_variables;
 non terminal program;
 
+// los nuevos
+non terminal equality_conditionA;
+non terminal relational_conditionA;
+non terminal blockA;
+non terminal paramsA;
+non terminal argsA;
+non terminal global_variablesA;
+
+// Por úlitmo un orden precendencia para el cup
+precedence left or_operator; // ~
+precedence left and_operator; // @
+precedence right not_operator; // Σ
+precedence nonassoc equal_operator, not_equal_operator; //==, !=
+precedence nonassoc greater_operator, less_operator, greater_equal_operator, less_equal_operator; // >, <, >=, <=
+precedence left plus_operator, minus_operator; // +, -
+precedence left multiplication_operator, division_operator, int_division_operator, modulo_operator; // *, /, //, %
+precedence right power_operator; // ^
+precedence right increment_operator, decrement_operator; // ++, --
+//ESTOS LOS PODEMOS REVISAR PARA VER SI LOS UNARIOS TAMBIÉN VAN
+
+
+
 // El start siempre después de los terminales y no terminales
 start with program;
 
 // REGLAS DE PRODUCCIÓN - tener cuidado aqui probar probar por regla ararar
 
+
+type ::= int_keyword | float_keyword | bool_keyword | char_keyword | string_keyword;
+
+
+// Aquí van operaciones aritmeticas 
 literal ::= int_literal | float_literal | bool_literal | char_literal | string_literal;
 
-unary_negative ::= minus_operator number_literal;
-number_literal ::= int_literal | float_literal;
+unary_negative ::= minus_operator int_literal | minus_operator float_literal;
 
-postfix_expression ::= identifier postfix_expressionA;
-postfix_expressionA ::= increment_operator | decrement_operator;
+postfix_expression ::= identifier increment_operator | identifier decrement_operator;
 
 arithmetic_expression ::= arithmetic_expression plus_operator term | arithmetic_expression minus_operator term | term;
 
-term ::= term termA power | power;
-termA ::= multiplication_operator | division_operator |  int_division_operator | modulo_operator;
+term ::= term multiplication_operator power | term division_operator power | term int_division_operator power | term modulo_operator power | power;
 
 power ::= factor power_operator power | factor;
+
 factor ::= left_parenthesis arithmetic_expression right_parenthesis | arithmetic_operands;
+
 arithmetic_operands ::= int_literal | float_literal | identifier | unary_negative | postfix_expression | array_access | function_call;
 
-condition ::= condition_simple conditionCont;
-conditionCont ::= logical_operator condition_simple conditionCont | /* empty */;
+// SON DE PRUEBA LOS DOS POR AQUELLO 
+array_element ::= int_literal | char_literal | identifier | arithmetic_expression;
+
+array_elements_list ::= array_element | array_elements_list comma_keyword array_element;
+
+else_if_list ::= /* empty */ | else_if | else_if_list else_if;
+
+loop_body ::= statements | break_statement | loop_body statements | loop_body break_statement;
+
+// Hasta aquí van operaciones aritmeticas
+
+
+//Aquí empiezan las operaciones lógicas 
+condition ::= condition_simple conditionA;
+conditionA ::= logical_operator condition_simple conditionA | /* empty */;
 
 relational_expression ::= arithmetic_expression relational_operator_numeric arithmetic_expression;
 
-condition_simple ::= relational_expression | bool_literal | equality_expression | function_call | identifier | left_parenthesis condition right_parenthesis | not_condition;
+condition_simple ::= relational_expression | bool_literal | equality_expression | function_call | identifier | left_parenthesis condition right_parenthesis| not_condition;
 
 relational_operator_numeric ::= greater_operator | less_operator | greater_equal_operator | less_equal_operator;
 
-equality_operand ::= arithmetic_expression | bool_literal | identifier;
+equality_expression ::= arithmetic_expression equality_operator arithmetic_expression | arithmetic_expression equality_operator bool_literal | arithmetic_expression equality_operator identifier
+    | bool_literal equality_operator arithmetic_expression | bool_literal equality_operator bool_literal | bool_literal equality_operator identifier
+    | identifier equality_operator arithmetic_expression | identifier equality_operator bool_literal| identifier equality_operator identifier;
 
-equality_expression ::= equality_operand equality_operator equality_operand;
-
-equality_operator ::= equal_operator | not_equal_operator;
 
 logical_operator ::= or_operator | and_operator;
 
 not_condition ::= not_operator condition_simple;
+//Hasta aquí van las operaciones lógicas
+
+
+//Aquí empiezan las operaciones relacionales 
+conditionR ::= equality_condition;
+
+equality_condition ::= relational_condition equality_conditionA;
+equality_conditionA ::= equality_operator relational_condition equality_conditionA | /* empty */;
+
+relational_condition ::= simple_condition relational_conditionA;
+relational_conditionA ::= relational_operator simple_condition relational_conditionA | /* empty */;
+
+simple_condition ::= declaration | int_literal | float_literal | left_parenthesis conditionR right_parenthesis;
+
+relational_operator ::= greater_operator | less_operator | greater_equal_operator | less_equal_operator;
+equality_operator ::= equal_operator | not_equal_operator;
+
+//Hasta aquí las operaciones relacionales 
+
+
+declaration ::= let_keyword type identifier assignment_operator literal delimiter  
+| let_keyword type identifier assignment_operator identifier delimiter
+| let_keyword type identifier assignment_operator array_access delimiter
+| let_keyword type identifier assignment_operator arithmetic_expression delimiter 
+| let_keyword type identifier assignment_operator condition delimiter
+| let_keyword type identifier assignment_operator conditionR delimiter
+| let_keyword type identifier delimiter;
+
+reassignment ::= identifier  assignment_operator literal delimiter
+| identifier assignment_operator identifier delimiter  //Esto podría ser ambiguo
+| identifier assignment_operator array_access delimiter
+| identifier assignment_operator arithmetic_expression delimiter
+| identifier assignment_operator condition delimiter
+| identifier assignment_operator conditionR delimiter;
+
+
+
+//Arreglos
+
+array_declaration ::= let_keyword char_keyword identifier left_block int_literal right_block delimiter
+| let_keyword int_keyword identifier left_block int_literal right_block delimiter
+| let_keyword char_keyword identifier left_block int_literal right_block assignment_operator left_block array_elements_list right_block delimiter
+| let_keyword int_keyword identifier left_block int_literal right_block assignment_operator left_block array_elements_list right_block delimiter;
+
+
+assign_elements_array ::= identifier left_block int_literal right_block assignment_operator int_literal delimiter
+| identifier left_block int_literal right_block assignment_operator char_literal delimiter
+| identifier left_block int_literal right_block assignment_operator identifier delimiter
+| identifier left_block int_literal right_block assignment_operator arithmetic_expression delimiter;
+
+
+array_access ::= identifier left_block int_literal right_block;
+
+
+//Todas las sentencias y bloques de código posibles
+block ::= left_block blockA right_block;
+blockA ::= statements blockA | /* empty */;
+
+statements ::= statements statement | statement;
+statement ::= declaration | reassignment | array_declaration | assign_elements_array | input_statement | output_statement | decide_of | loop | for_loop | return_statement;
+
+
+//Funciones input y output
+input_statement ::= input_keyword identifier delimiter;
+output_statement ::= output_keyword identifier delimiter
+| output_keyword int_literal delimiter
+| output_keyword float_literal delimiter
+| output_keyword bool_literal delimiter
+| output_keyword string_literal delimiter
+| output_keyword char_literal delimiter;
+
+
+//Decide of
+decide_of ::= decide_of_keyword left_parenthesis multiple_condition right_parenthesis block
+| decide_of_keyword left_parenthesis multiple_condition right_parenthesis block else_if_list
+| decide_of_keyword left_parenthesis multiple_condition right_parenthesis block else_part
+| decide_of_keyword left_parenthesis multiple_condition right_parenthesis block else_if_list else_part;
+else_if ::= elseif_keyword left_parenthesis multiple_condition right_parenthesis block;
+else_part ::= else_keyword block;
+multiple_condition ::= conditionR | condition;
+
+//LOOP
+loop ::= loop_keyword loop_body exit_when_keyword multiple_condition delimiter end_loop_$_keyword;
+break_statement ::= break_keyword delimiter;
+
+//FOR
+for_loop ::= for_keyword declaration step_keyword int_literal to_keyword int_literal do_keyword left_block loop_body right_block
+| for_keyword declaration step_keyword int_literal to_keyword float_literal do_keyword left_block loop_body right_block
+| for_keyword declaration step_keyword int_literal downto_keyword int_literal do_keyword left_block loop_body right_block
+| for_keyword declaration step_keyword int_literal downto_keyword float_literal do_keyword left_block loop_body right_block
+| for_keyword declaration step_keyword float_literal to_keyword int_literal do_keyword left_block loop_body right_block
+| for_keyword declaration step_keyword float_literal to_keyword float_literal do_keyword left_block loop_body right_block
+| for_keyword declaration step_keyword float_literal downto_keyword int_literal do_keyword left_block loop_body right_block
+| for_keyword declaration step_keyword float_literal downto_keyword float_literal do_keyword left_block loop_body right_block;
+
+
+//FUNCIONES
+function ::= type identifier left_parenthesis right_parenthesis block | type identifier left_parenthesis params right_parenthesis block;
+
+functions ::= /* empty */ | function | functions function;
+
+params ::= param paramsA ;
+paramsA ::= comma_keyword param paramsA | /* empty */ ;
+param ::= type identifier;
+
+return_statement ::= return_keyword literal delimiter 
+| return_keyword identifier delimiter
+| return_keyword array_access delimiter
+| return_keyword arithmetic_expression delimiter
+| return_keyword condition delimiter
+| return_keyword conditionR delimiter
+| return_keyword delimiter;
+
+function_call ::= identifier left_parenthesis args right_parenthesis 
+| identifier left_parenthesis right_parenthesis;
+
+args ::= arg argsA ;
+arg ::= literal | identifier | arithmetic_expression | array_access ;
+argsA ::= comma_keyword arg argsA | /* empty */ ;
+
+
+// PROGRAMA FINAL 
+principal ::= void_keyword principal_keyword block;
+global_variables ::= global_variablesA;
+
+global_variablesA ::= /* empty */  | declaration global_variablesA | array_declaration global_variablesA;
+program ::= global_variables principal functions | global_variables functions principal | global_variables functions principal functions;
