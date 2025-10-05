@@ -1,8 +1,9 @@
+package codigo;
 import java_cup.runtime.*;
 
 %%
 
-%class LexerReal
+%class Lexer
 %public
 %unicode
 %cup
