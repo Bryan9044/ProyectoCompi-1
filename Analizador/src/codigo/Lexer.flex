@@ -26,10 +26,19 @@ import java_cup.runtime.*;
 
 %%
 
-principal { return symbol(sym.PRINCIPAL); }
-int { return symbol(sym.INT); }
-[a-zA-Z_][a-zA-Z0-9_]* { return symbol(sym.ID, yytext()); }
-[0-9]+ { return symbol(sym.NUM, yytext()); }
-"+" { return symbol(sym.PLUS); }
+let { return symbol(sym.let_keyword); }
+int { return symbol(sym.int_keyword); }
+
+"=" { return symbol(sym.assignment_operator); }
+"$" { return symbol(sym.delimiter); }
+
+[a-zA-Z_][a-zA-Z0-9_]* { return symbol(sym.identifier, yytext()); }
+[0-9]+ { return symbol(sym.int_literal, yytext()); }
+
+"+" { return symbol(sym.plus_operator); }
+"-" { return symbol(sym.minus_operator); }
+"*" { return symbol(sym.multiplication_operator); }
+"/" { return symbol(sym.division_operator); }
+
 [ \t\n\r]+ { /* ignorar */ }
 . { System.err.println("Error lexico: " + yytext()); }

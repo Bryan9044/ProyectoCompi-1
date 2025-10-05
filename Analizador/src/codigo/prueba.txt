@@ -1,1 +1,1 @@
- principal int x
+ let int x = 5$

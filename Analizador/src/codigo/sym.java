@@ -9,83 +9,66 @@ package codigo;
 public class sym {
   /* terminals */
   public static final int right_parenthesis = 3;
-  public static final int let_keyword = 32;
-  public static final int equal_operator = 50;
-  public static final int true_keyword = 68;
-  public static final int char_literal = 65;
-  public static final int left_exclamation = 5;
-  public static final int not_operator = 56;
-  public static final int right_block = 8;
-  public static final int elseif_keyword = 58;
-  public static final int float_keyword = 26;
-  public static final int exit_when_keyword = 37;
-  public static final int identifier_char = 24;
-  public static final int comma_keyword = 35;
-  public static final int decrement_operator = 17;
-  public static final int false_keyword = 69;
-  public static final int identifier = 67;
-  public static final int not_equal_operator = 51;
-  public static final int greater_equal_operator = 48;
-  public static final int division_operator = 12;
+  public static final int let_keyword = 23;
+  public static final int equal_operator = 41;
+  public static final int char_literal = 53;
+  public static final int not_operator = 46;
+  public static final int right_block = 5;
+  public static final int elseif_keyword = 48;
+  public static final int float_keyword = 17;
+  public static final int exit_when_keyword = 28;
+  public static final int decrement_operator = 14;
+  public static final int comma_keyword = 26;
+  public static final int identifier = 55;
+  public static final int not_equal_operator = 42;
+  public static final int greater_equal_operator = 39;
+  public static final int division_operator = 9;
   public static final int left_parenthesis = 2;
-  public static final int modulo_operator = 14;
-  public static final int float_literal = 63;
-  public static final int and_operator = 55;
-  public static final int break_keyword = 45;
-  public static final int assignment_operator = 18;
-  public static final int letter_or_underscore = 23;
-  public static final int zero_literal = 21;
-  public static final int int_division_operator = 13;
-  public static final int double_quote = 61;
-  public static final int or_operator = 54;
-  public static final int multiplication_operator = 11;
+  public static final int modulo_operator = 11;
+  public static final int float_literal = 51;
+  public static final int and_operator = 45;
+  public static final int break_keyword = 36;
+  public static final int assignment_operator = 15;
+  public static final int int_division_operator = 10;
+  public static final int or_operator = 44;
+  public static final int multiplication_operator = 8;
   public static final int EOF = 0;
-  public static final int increment_operator = 16;
-  public static final int do_keyword = 43;
+  public static final int increment_operator = 13;
+  public static final int do_keyword = 34;
   public static final int error = 1;
-  public static final int return_keyword = 44;
-  public static final int less_operator = 47;
-  public static final int output_keyword = 34;
-  public static final int line_break = 53;
-  public static final int int_keyword = 25;
-  public static final int single_quote = 60;
-  public static final int for_keyword = 39;
-  public static final int digit1to9_literal = 19;
-  public static final int delimiter = 52;
-  public static final int string_keyword = 29;
-  public static final int minus_operator = 10;
-  public static final int power_operator = 15;
-  public static final int int_literal = 62;
-  public static final int downto_keyword = 42;
-  public static final int dot_literal = 22;
-  public static final int step_keyword = 40;
-  public static final int bool_keyword = 27;
-  public static final int right_exclamation = 6;
-  public static final int principal_keyword = 31;
-  public static final int string_literal = 66;
-  public static final int to_keyword = 41;
-  public static final int less_equal_operator = 49;
-  public static final int loop_keyword = 36;
-  public static final int decimal_digit_literal = 20;
-  public static final int char_keyword = 28;
-  public static final int void_keyword = 30;
-  public static final int else_keyword = 59;
-  public static final int input_keyword = 33;
-  public static final int bool_literal = 64;
-  public static final int end_loop_$_keyword = 38;
-  public static final int greater_operator = 46;
-  public static final int wall_comment = 4;
-  public static final int decide_of_keyword = 57;
-  public static final int plus_operator = 9;
-  public static final int left_block = 7;
+  public static final int return_keyword = 35;
+  public static final int less_operator = 38;
+  public static final int output_keyword = 25;
+  public static final int int_keyword = 16;
+  public static final int for_keyword = 30;
+  public static final int delimiter = 43;
+  public static final int string_keyword = 20;
+  public static final int minus_operator = 7;
+  public static final int power_operator = 12;
+  public static final int int_literal = 50;
+  public static final int downto_keyword = 33;
+  public static final int step_keyword = 31;
+  public static final int bool_keyword = 18;
+  public static final int principal_keyword = 22;
+  public static final int string_literal = 54;
+  public static final int to_keyword = 32;
+  public static final int less_equal_operator = 40;
+  public static final int loop_keyword = 27;
+  public static final int char_keyword = 19;
+  public static final int void_keyword = 21;
+  public static final int else_keyword = 49;
+  public static final int input_keyword = 24;
+  public static final int bool_literal = 52;
+  public static final int end_loop_$_keyword = 29;
+  public static final int greater_operator = 37;
+  public static final int decide_of_keyword = 47;
+  public static final int plus_operator = 6;
+  public static final int left_block = 4;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "left_parenthesis",
   "right_parenthesis",
-  "wall_comment",
-  "left_exclamation",
-  "right_exclamation",
   "left_block",
   "right_block",
   "plus_operator",
@@ -98,12 +81,6 @@ public class sym {
   "increment_operator",
   "decrement_operator",
   "assignment_operator",
-  "digit1to9_literal",
-  "decimal_digit_literal",
-  "zero_literal",
-  "dot_literal",
-  "letter_or_underscore",
-  "identifier_char",
   "int_keyword",
   "float_keyword",
   "bool_keyword",
@@ -132,23 +109,18 @@ public class sym {
   "equal_operator",
   "not_equal_operator",
   "delimiter",
-  "line_break",
   "or_operator",
   "and_operator",
   "not_operator",
   "decide_of_keyword",
   "elseif_keyword",
   "else_keyword",
-  "single_quote",
-  "double_quote",
   "int_literal",
   "float_literal",
   "bool_literal",
   "char_literal",
   "string_literal",
-  "identifier",
-  "true_keyword",
-  "false_keyword"
+  "identifier"
   };
 }
 
