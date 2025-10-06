@@ -1,0 +1,18 @@
+=== ANÁLISIS LÉXICO ===
+TOKEN			LEXEMA
+----------------------------------------
+LET                 	let
+INT                 	int
+IDENTIFIER          	x
+ASSIGN              	=
+INT_LITERAL         	5
+DELIMITER           	$
+VOID                	void
+PRINCIPAL           	principal
+LEFT_BLOCK          	¿
+OUTPUT              	output
+IDENTIFIER          	x
+DELIMITER           	$
+RIGHT_BLOCK         	?
+----------------------------------------
+=== FIN DEL ANÁLISIS ===
