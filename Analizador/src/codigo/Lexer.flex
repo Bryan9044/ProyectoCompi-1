@@ -115,7 +115,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 Digit = [0-9]
 Letter = [a-zA-Z]
 Underscore = _
-
+UniqueComment = \|[^\n]*
 /* Identificadores */
 Identifier = {Letter}({Letter}|{Digit}|{Underscore})*
 
@@ -140,6 +140,7 @@ StringLiteral = \"([^\"\n\\]|\\n)*\"
 %%
 
 <YYINITIAL> {
+    {UniqueComment}   { /* ignorar */ }
     /* Espacios en blanco */
     {WhiteSpace}        { /* ignorar */ }
 
