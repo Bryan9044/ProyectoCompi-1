@@ -73,8 +73,8 @@ terminal String else_keyword;
 terminal String int_literal;
 terminal String float_literal;
 terminal String bool_literal;
-terminal String char_literal;
-terminal String string_literal;
+terminal String CHAR_LITERAL;
+terminal String STRING_LITERAL;
 terminal String identifier;
 
 
@@ -245,8 +245,8 @@ relational_expression ::= arithmetic_expression greater_operator arithmetic_expr
             {: System.out.println("  ✓ Diferente que (!=) reconocido"); :}
             ;
 
-//Declaraciones
-declaration_values ::= arithmetic_expression | logical_expresion;
+//Declaraciones// Char y string es agregado para una prueba
+declaration_values ::= arithmetic_expression | logical_expresion | CHAR_LITERAL | STRING_LITERAL;
 
 declaration ::= let_keyword int_keyword identifier delimiter
              {: System.out.println("  ✓ Declaracion: int sin valor"); :}
@@ -289,17 +289,17 @@ array_declaration ::= let_keyword int_keyword identifier left_block int_literal 
                 ;
 
 array_literals ::= int_literal
-                 |  char_literal
+                 |  CHAR_LITERAL
                  |  identifier
                  |  array_literals comma_keyword int_literal
-                 |  array_literals comma_keyword char_literal
+                 |  array_literals comma_keyword CHAR_LITERAL
                  |  array_literals comma_keyword identifier
                  ;
 
 assign_elements_array ::= identifier left_block int_literal right_block assignment_operator arithmetic_expression delimiter
                 {: System.out.println("  ✓ Asignacion a elemento de arreglo"); :}
 
-                       |  identifier left_block int_literal right_block assignment_operator char_literal delimiter
+                       |  identifier left_block int_literal right_block assignment_operator CHAR_LITERAL delimiter
                        {: System.out.println("  ✓ Asignacion a elemento de arreglo"); :}
                        ;
 
@@ -317,9 +317,9 @@ output_statement ::= output_keyword identifier delimiter
                   {: System.out.println("  ✓ OUTPUT flotante"); :}
                   |  output_keyword bool_literal delimiter
                   {: System.out.println("  ✓ OUTPUT booleano"); :}
-                  |  output_keyword char_literal delimiter
+                  |  output_keyword CHAR_LITERAL delimiter
                   {: System.out.println("  ✓ OUTPUT caracter"); :}
-                  |  output_keyword string_literal delimiter
+                  |  output_keyword STRING_LITERAL delimiter
                   {: System.out.println("  ✓ OUTPUT cadena"); :}
                   ;
 

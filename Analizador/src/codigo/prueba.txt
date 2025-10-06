@@ -1,5 +1,10 @@
 let int x = 5$
 
-void principal ¿
+void principal є э ¿
+    let int y = 10#$          
+    let float z @ 3.14$       
+    let char c = 'a'&$        
     output x$
+    let int suma = x + y * 2$
+    output suma$
 ?

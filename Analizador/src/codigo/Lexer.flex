@@ -2,6 +2,7 @@ package codigo;
 
 import java_cup.runtime.*;
 import java.io.*;
+import java.util.ArrayList;
 
 %%
 
@@ -14,13 +15,16 @@ import java.io.*;
 
 %{
     private PrintWriter logWriter;
-    
-    // Constructor que acepta un archivo de salida para los tokens
+    private ArrayList<String> errores = new ArrayList<>();
+    private int errorCount = 0;
+
+    //Constructor el cual lee el código fuente y escribe un 
+    //reporte de tokens con su token,lexema,linea y columna
     public Lexer(Reader in, String outputFile) throws IOException {
         this(in);
         logWriter = new PrintWriter(new FileWriter(outputFile));
         logWriter.println("=== ANÁLISIS LÉXICO ===");
-        logWriter.println("TOKEN\t\t\tLEXEMA");
+        logWriter.println("TOKEN\t\t\tLEXEMA\t\tLINEA\t\tCOLUMNA");
         logWriter.println("----------------------------------------");
     }
     
@@ -28,17 +32,53 @@ import java.io.*;
         return symbol(type, null);
     }
 
+    // Este es el que eescribe en el archivo de log en general
+    // por cada token con su respectivo nombre, lexema, línea y columna
     private Symbol symbol(int type, Object value) {
-        // Escribir en el archivo de log
         if (logWriter != null) {
             String tokenName = getTokenName(type);
             String lexeme = (value != null) ? value.toString() : "";
-            logWriter.printf("%-20s\t%s%n", tokenName, lexeme);
+            logWriter.printf("%-25s\t%-15s\t%d\t%d%n", tokenName, lexeme, yyline + 1, yycolumn + 1);
             logWriter.flush();
         }
         return new Symbol(type, yyline, yycolumn, value);
     }
     
+    // este metodo lo que hace es aumentar el contador de errores,
+    // reportar el error y registrarlo, esto no detiene el programa porque funciona
+    // en modo panico
+    private void reportError(String message) {
+        errorCount++;
+        String error = String.format("Error léxico: #%d - Línea %d, Columna %d: %s", errorCount, yyline+1, yycolumn+1, message);
+        errores.add(error);
+
+        System.err.println("!!!!" + error);
+
+        if (logWriter != null) {
+            logWriter.println(">>> " + error);
+            logWriter.flush();
+        }
+    }
+
+    // Obtenemos la lista de errores
+    public ArrayList<String> getErrores() {
+        return errores;
+    }
+    
+    // Obtenemos el conteo de errores
+    public int getErrorCount() {
+        return errorCount;
+    }
+    
+    public boolean hayErrores() {
+        return errorCount > 0;
+    }
+    
+ 
+
+
+
+
     private String getTokenName(int type) {
         switch(type) {
             case sym.plus_operator: return "PLUS_OPERATOR";
@@ -69,8 +109,8 @@ import java.io.*;
             case sym.int_literal: return "INT_LITERAL";
             case sym.float_literal: return "FLOAT_LITERAL";
             case sym.bool_literal: return "BOOL_LITERAL";
-            case sym.char_literal: return "CHAR_LITERAL";
-            case sym.string_literal: return "STRING_LITERAL";
+            case sym.CHAR_LITERAL: return "CHAR_LITERAL"; // Esto es por una prueba
+            case sym.STRING_LITERAL: return "STRING_LITERAL"; // esto es por una prueba
             case sym.identifier: return "IDENTIFIER";
             case sym.int_keyword: return "INT";
             case sym.float_keyword: return "FLOAT";
@@ -102,8 +142,17 @@ import java.io.*;
     
     public void closeLog() {
         if (logWriter != null) {
-            logWriter.println("----------------------------------------");
+            logWriter.println("----------------------------------------------------------");
             logWriter.println("=== FIN DEL ANÁLISIS ===");
+            if (errorCount > 0) {
+                logWriter.println("\n>>> TOTAL DE ERRORES LÉXICOS: " + errorCount);
+                logWriter.println("\nLISTA DE ERRORES:");
+                for (String error : errores) {
+                    logWriter.println("  " + error);
+                }
+            } else {
+                logWriter.println("✓ Sin errores léxicos");
+            }
             logWriter.close();
         }
     }
@@ -212,13 +261,11 @@ StringLiteral = \"([^\"\n\\]|\\n)*\"
     /* Literales */
     {IntegerLiteral}    { return symbol(sym.int_literal, yytext()); }
     {FloatLiteral}      { return symbol(sym.float_literal, yytext()); }
-    {CharLiteral}       { 
-        String text = yytext();
-        return symbol(sym.char_literal, text.substring(1, text.length()-1));
+    {CharLiteral}       {  // Char y string es ais por una prueba
+        return symbol(sym.char_literal, yytext());
     }
     {StringLiteral}     { 
-        String text = yytext();
-        return symbol(sym.string_literal, text.substring(1, text.length()-1));
+        return symbol(sym.string_literal, yytext());
     }
 
     //ID
@@ -226,13 +273,15 @@ StringLiteral = \"([^\"\n\\]|\\n)*\"
 
 
 
+    /* RECUPERACIÓN DE ERRORES EN MODO PÁNICO */
+    .   { 
+        // NO lanza excepción, solo reporta y continúa
+        reportError("Caracter ilegal: '" + yytext() + "'");
+        // Continúa con el siguiente carácter
+    }
+        }
 
-    /* Error */
-    .                   { throw new Error("Carácter ilegal en línea " + (yyline+1) + 
-                                        ": '" + yytext() + "'"); }
+<<EOF>>                { 
+    closeLog();
+    return symbol(sym.EOF); 
 }
-
-<<EOF>>                 { 
-                          closeLog();
-                          return symbol(sym.EOF); 
-                        }

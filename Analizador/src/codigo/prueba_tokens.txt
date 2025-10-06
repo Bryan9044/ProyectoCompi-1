@@ -1,12 +1,59 @@
-let_keyword -> let
-int_keyword -> int
-identifier -> x
-assignment_operator -> =
-int_literal -> -10
-delimiter -> $
-let_keyword -> let
-float_keyword -> float
-identifier -> y
-assignment_operator -> =
-float_literal -> -3.14
-delimiter -> $
+=== ANÁLISIS LÉXICO ===
+TOKEN			LEXEMA		LINEA		COLUMNA
+----------------------------------------
+LET                      	let            	1	1
+INT                      	int            	1	5
+IDENTIFIER               	x              	1	9
+ASSIGN                   	=              	1	11
+INT_LITERAL              	5              	1	13
+DELIMITER                	$              	1	14
+VOID                     	void           	3	1
+PRINCIPAL                	principal      	3	6
+LEFT_PAREN               	є              	3	16
+RIGHT_PAREN              	э              	3	18
+LEFT_BLOCK               	¿              	3	20
+LET                      	let            	4	5
+INT                      	int            	4	9
+IDENTIFIER               	y              	4	13
+ASSIGN                   	=              	4	15
+INT_LITERAL              	10             	4	17
+>>> Error léxico: #1 - Línea 4, Columna 19: Caracter ilegal: '#'
+DELIMITER                	$              	4	20
+LET                      	let            	5	5
+FLOAT                    	float          	5	9
+IDENTIFIER               	z              	5	15
+AND                      	@              	5	17
+FLOAT_LITERAL            	3.14           	5	19
+DELIMITER                	$              	5	23
+LET                      	let            	6	5
+CHAR                     	char           	6	9
+IDENTIFIER               	c              	6	14
+ASSIGN                   	=              	6	16
+CHAR_LITERAL             	a              	6	18
+>>> Error léxico: #2 - Línea 6, Columna 21: Caracter ilegal: '&'
+DELIMITER                	$              	6	22
+OUTPUT                   	output         	7	5
+IDENTIFIER               	x              	7	12
+DELIMITER                	$              	7	13
+LET                      	let            	8	5
+INT                      	int            	8	9
+IDENTIFIER               	suma           	8	13
+ASSIGN                   	=              	8	18
+IDENTIFIER               	x              	8	20
+PLUS_OPERATOR            	+              	8	22
+IDENTIFIER               	y              	8	24
+MULT_OPERATOR            	*              	8	26
+INT_LITERAL              	2              	8	28
+DELIMITER                	$              	8	29
+OUTPUT                   	output         	9	5
+IDENTIFIER               	suma           	9	12
+DELIMITER                	$              	9	16
+RIGHT_BLOCK              	?              	10	1
+----------------------------------------------------------
+=== FIN DEL ANÁLISIS ===
+
+>>> TOTAL DE ERRORES LÉXICOS: 2
+
+LISTA DE ERRORES:
+  Error léxico: #1 - Línea 4, Columna 19: Caracter ilegal: '#'
+  Error léxico: #2 - Línea 6, Columna 21: Caracter ilegal: '&'

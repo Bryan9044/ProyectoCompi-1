@@ -1,0 +1,6 @@
+=== ANÁLISIS LÉXICO ===
+TOKEN			LEXEMA
+----------------------------------------
+VOID                	void
+PRINCIPAL           	principal
+LEFT_PAREN          	є

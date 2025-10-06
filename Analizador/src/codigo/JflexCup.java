@@ -68,22 +68,35 @@ public class JflexCup {
         try {
             String outputFile = inputFile.replace(".txt", "_tokens.txt");
 
-            Lexer lexer = new Lexer(new FileReader(inputFile));
-            parser parser = new parser(lexer);
+            FileInputStream fis = new FileInputStream(inputFile);
+            InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
+            Lexer lexer = new Lexer(reader, outputFile);
 
             System.out.println("=== INICIANDO ANALISIS ===\n");
             System.out.println("Leyendo tokens...");
 
-            try (BufferedWriter out = new BufferedWriter(new FileWriter(outputFile))) {
-                Symbol token;
-                while ((token = lexer.next_token()).sym != sym.EOF) {
-                    String nombreToken = sym.terminalNames[token.sym]; // nombre del token
-                    out.write(nombreToken + " -> " + token.value);
-                    out.newLine();
-                }
+            Symbol token;
+            int tokenCount = 0;
+            while ((token = lexer.next_token()).sym != sym.EOF) {
+                tokenCount++;
             }
 
-            System.out.println("\n=== ANALISIS COMPLETADO EXITOSAMENTE ===");
+            System.out.println("\n========================================");
+            System.out.println("    RESUMEN DEL ANÁLISIS LÉXICO");
+            System.out.println("========================================");
+            System.out.println("Tokens reconocidos: " + tokenCount);
+            System.out.println("Errores léxicos: " + lexer.getErrorCount());
+
+            if (lexer.hayErrores()) {
+                System.err.println("\n⚠️  ERRORES ENCONTRADOS:");
+                for (String error : lexer.getErrores()) {
+                    System.err.println("  - " + error);
+                }
+            } else {
+                System.out.println("\n✓ Sin errores léxicos");
+            }
+
+            System.out.println("\n=== ANALISIS COMPLETADO ===");
             System.out.println("Tokens guardados en: " + outputFile);
 
         } catch (Exception e) {
@@ -133,50 +146,44 @@ public class JflexCup {
         System.out.println("║     PRUEBA DEL PARSER CUP              ║");
         System.out.println("\n Archivo: " + archivoEntrada);
         System.out.println("\n" + "=".repeat(45));
-        
+
         try {
-            // Leer el archivo
             File archivo = new File(archivoEntrada);
             if (!archivo.exists()) {
                 System.err.println(" ERROR: El archivo no existe");
                 System.err.println("   Ruta: " + archivo.getAbsolutePath());
                 return;
             }
-            
-            // Mostrar contenido del archivo
+
             System.out.println("\n CONTENIDO DEL ARCHIVO:");
             System.out.println("-".repeat(45));
             mostrarArchivo(archivoEntrada);
             System.out.println("-".repeat(45));
-            
-            // Crear el lexer con encoding UTF-8
+
             FileInputStream fis = new FileInputStream(archivoEntrada);
             InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-            
-            // Generar log de tokens
+
+            // ← FIX: Generar nombre del archivo de log correctamente
             String logTokens = archivoEntrada.replace(".txt", "_tokens.log");
             Lexer lexer = new Lexer(reader, logTokens);
-            
-            // Crear el parser
+
             System.out.println("\n Empieza analisis...\n");
             parser parser = new parser(lexer);
-            
-            // ¡PARSEAR!
+
             Symbol resultado = parser.parse();
-            
-            // Si llega aquí = ÉXITO
+
             System.out.println("\n" + "=".repeat(45));
             System.out.println("\n¡Parser funciona!\n");
             System.out.println("Análisis léxico: OK");
             System.out.println("Análisis sintáctico: OK");
             System.out.println("Estructura del programa: VÁLIDA");
-            System.out.println("\n📋 Log de tokens en: " + logTokens);
+            System.out.println("\n Log de tokens en: " + logTokens);
             System.out.println("\n" + "=".repeat(45));
-            
+
         } catch (FileNotFoundException e) {
             System.err.println("\n❌ ERROR: Archivo no encontrado");
             System.err.println("   " + e.getMessage());
-            
+
         } catch (Exception e) {
             System.err.println("\n" + "=".repeat(45));
             System.err.println("ERROR EN EL ANÁLISIS");

@@ -1,18 +1,31 @@
 === ANÁLISIS LÉXICO ===
-TOKEN			LEXEMA
+TOKEN			LEXEMA		LINEA		COLUMNA
 ----------------------------------------
-LET                 	let
-INT                 	int
-IDENTIFIER          	x
-ASSIGN              	=
-INT_LITERAL         	5
-DELIMITER           	$
-VOID                	void
-PRINCIPAL           	principal
-LEFT_BLOCK          	¿
-OUTPUT              	output
-IDENTIFIER          	x
-DELIMITER           	$
-RIGHT_BLOCK         	?
-----------------------------------------
-=== FIN DEL ANÁLISIS ===
+LET                      	let            	1	1
+INT                      	int            	1	5
+IDENTIFIER               	x              	1	9
+ASSIGN                   	=              	1	11
+INT_LITERAL              	5              	1	13
+DELIMITER                	$              	1	14
+LET                      	let            	2	1
+FLOAT                    	float          	2	5
+IDENTIFIER               	pi             	2	11
+ASSIGN                   	=              	2	14
+FLOAT_LITERAL            	3.14           	2	16
+DELIMITER                	$              	2	20
+LET                      	let            	3	1
+BOOL                     	bool           	3	5
+IDENTIFIER               	activo         	3	10
+ASSIGN                   	=              	3	17
+BOOL_LITERAL             	True           	3	19
+DELIMITER                	$              	3	23
+LET                      	let            	4	1
+CHAR                     	char           	4	5
+IDENTIFIER               	letra          	4	10
+ASSIGN                   	=              	4	16
+CHAR_LITERAL             	'A'            	4	18
+DELIMITER                	$              	4	21
+LET                      	let            	5	1
+STRING                   	string         	5	5
+IDENTIFIER               	nombre         	5	12
+ASSIGN                   	=              	5	19

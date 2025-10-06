@@ -1,5 +1,31 @@
 let int x = 5$
+let float pi = 3.14$
+let bool activo = True$
+let char letra = 'A'$
+let string nombre = "Juan"$
 
-void principal ¿
+void principal є э ¿
+    let int y = 10$
+    let int z = x + y$
+    
     output x$
+    output z$
+    
+    decide of є x > 5 э ¿
+        output x$
+    ? elif є x == 5 э ¿
+        output y$
+    ? else ¿
+        output z$
+    ?
+    
+    loop ¿
+        let int contador = 0$
+        exit when є contador > 10 э$
+    end loop$
+    
+    
+    for є let int i = 0$ to 10$ step 1 э do ¿
+        output i$
+    ?
 ?

@@ -11,7 +11,8 @@ public class sym {
   public static final int right_parenthesis = 3;
   public static final int let_keyword = 23;
   public static final int equal_operator = 41;
-  public static final int char_literal = 53;
+  public static final int STRING_LITERAL = 54;
+  public static final int CHAR_LITERAL = 53;
   public static final int not_operator = 46;
   public static final int right_block = 5;
   public static final int elseif_keyword = 48;
@@ -50,7 +51,6 @@ public class sym {
   public static final int step_keyword = 31;
   public static final int bool_keyword = 18;
   public static final int principal_keyword = 22;
-  public static final int string_literal = 54;
   public static final int to_keyword = 32;
   public static final int less_equal_operator = 40;
   public static final int loop_keyword = 27;
@@ -118,8 +118,8 @@ public class sym {
   "int_literal",
   "float_literal",
   "bool_literal",
-  "char_literal",
-  "string_literal",
+  "CHAR_LITERAL",
+  "STRING_LITERAL",
   "identifier"
   };
 }
