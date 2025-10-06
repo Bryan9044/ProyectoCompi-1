@@ -505,8 +505,8 @@ public class Lexer implements java_cup.runtime.Scanner {
             case sym.int_literal: return "INT_LITERAL";
             case sym.float_literal: return "FLOAT_LITERAL";
             case sym.bool_literal: return "BOOL_LITERAL";
-            case sym.CHAR_LITERAL: return "CHAR_LITERAL";
-            case sym.STRING_LITERAL: return "STRING_LITERAL";
+            case sym.CHAR_LITERAL: return "CHAR_LITERAL"; // Esto es por una prueba
+            case sym.STRING_LITERAL: return "STRING_LITERAL"; // esto es por una prueba
             case sym.identifier: return "IDENTIFIER";
             case sym.int_keyword: return "INT";
             case sym.float_keyword: return "FLOAT";
@@ -1153,7 +1153,8 @@ public class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 92: break;
           case 35:
-            { return symbol(sym.CHAR_LITERAL, yytext());
+            { // Char y string es ais por una prueba
+        return symbol(sym.char_literal, yytext());
             }
           // fall through
           case 93: break;
