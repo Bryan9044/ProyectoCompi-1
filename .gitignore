@@ -1,15 +1,11 @@
-/Analizador/dist/
-/Analizador/nbproject/private/
-/build/
-/Nueva carpeta/build/
-/Nueva carpeta/nbproject/private/
-/Analizador/build/
-# === Carpetas de NetBeans ===
-nbproject/
+# === Carpetas generadas ===
 build/
 dist/
 
-# === Archivos temporales/compilados ===
+# === NetBeans config privada ===
+nbproject/private/
+
+# === Compilados ===
 *.class
 *.jar
 *.war
@@ -20,12 +16,7 @@ dist/
 .DS_Store
 Thumbs.db
 
-# === Configuración local de IDE ===
-*.iml
-.idea/
-.vscode/
-
-# === Archivos generados por JFlex y CUP (opcionales si quieres regenerarlos) ===
+# === Opcional: generados por JFlex/CUP ===
 *Lexer.java
 *parser.java
 sym.java
