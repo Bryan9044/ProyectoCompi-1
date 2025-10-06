@@ -1,0 +1,543 @@
+package codigo;
+import java_cup.runtime.*;
+
+parser code {:
+    public void syntax_error(Symbol s) {
+        System.err.println("\n ERROR DE SINTAXIS:");
+        System.err.println("   Linea: " + (s.left+1));
+        System.err.println("   Token inesperado: " + s.value);
+    }
+    
+    public void report_error(String message, Object info) {
+        System.err.println("ERROR: " + message);
+    }
+    
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        System.err.println("\nERROR FATAL: No se puede recuperar del error de sintaxis");
+        throw new Exception("Error de sintaxis irrecuperable en linea " + (s.left+1));
+    }
+:};
+
+// TERMINALES
+terminal String left_parenthesis;
+terminal String right_parenthesis;
+terminal String left_block;
+terminal String right_block;
+
+terminal String plus_operator;
+terminal String minus_operator;
+terminal String multiplication_operator;
+terminal String division_operator;
+terminal String int_division_operator;
+terminal String modulo_operator;
+terminal String power_operator;
+terminal String increment_operator;
+terminal String decrement_operator;
+terminal String assignment_operator;
+
+
+terminal String int_keyword;
+terminal String float_keyword;
+terminal String bool_keyword;
+terminal String char_keyword;
+terminal String string_keyword;
+terminal String void_keyword;
+terminal String principal_keyword;
+terminal String let_keyword;
+terminal String input_keyword;
+terminal String output_keyword;
+terminal String comma_keyword;
+terminal String loop_keyword;
+terminal String exit_when_keyword;
+terminal String end_loop_$_keyword;
+terminal String for_keyword;
+terminal String step_keyword;
+terminal String to_keyword;
+terminal String downto_keyword;
+terminal String do_keyword;
+terminal String return_keyword;
+terminal String break_keyword;
+terminal String greater_operator;
+terminal String less_operator;
+terminal String greater_equal_operator;
+terminal String less_equal_operator;
+terminal String equal_operator;
+terminal String not_equal_operator;
+terminal String delimiter;
+terminal String or_operator;
+terminal String and_operator;
+terminal String not_operator;
+terminal String decide_of_keyword;
+terminal String elseif_keyword;
+terminal String else_keyword;
+terminal String int_literal;
+terminal String float_literal;
+terminal String bool_literal;
+terminal String CHAR_LITERAL;
+terminal String STRING_LITERAL;
+terminal String identifier;
+
+
+// NO TERMINALES
+// Expresiones aritméticas
+non terminal unary_negative;
+non terminal postfix_expression;
+non terminal arithmetic_expression;
+non terminal term;
+non terminal power;
+non terminal factor;
+non terminal arithmetic_operands;
+
+// Expresiones lógicas y relacionales
+non terminal logical_expresion;
+non terminal logical_expresion_or;
+non terminal logical_expresion_and;
+non terminal logical_expresion_operands;
+non terminal logical_factor;
+non terminal relational_expression;
+
+// Declaraciones y sentencias
+non terminal declaration_values;
+non terminal declaration;
+non terminal reassignment;
+non terminal array_declaration;
+non terminal assign_elements_array;
+non terminal array_access;
+non terminal statement;
+non terminal statements;
+non terminal block;
+
+// Funciones input y output
+non terminal input_statement;
+non terminal output_statement;
+
+// Bucles y condicionales
+non terminal loop;
+non terminal for_loop;
+non terminal loop_content;
+non terminal break_statement;
+non terminal decide_of;
+non terminal elif_list;
+non terminal elif_part;
+non terminal else_part;
+
+
+
+non terminal array_literals;
+
+
+
+
+// Funciones
+non terminal function;
+non terminal functions;
+non terminal params;
+non terminal param;
+non terminal params_tail;
+non terminal return_statement;
+non terminal function_call;
+non terminal args;
+non terminal args_tail;
+
+// Programa principal
+non terminal principal;
+non terminal global_variables;
+non terminal program;
+
+// los nuevos
+
+// Por úlitmo un orden precendencia para el cup
+precedence left or_operator; // ~
+precedence left and_operator; // @
+precedence right not_operator; // Σ
+precedence nonassoc equal_operator, not_equal_operator; //==, !=
+precedence nonassoc greater_operator, less_operator, greater_equal_operator, less_equal_operator; // >, <, >=, <=
+precedence left plus_operator, minus_operator; // +, -
+precedence left multiplication_operator, division_operator, int_division_operator, modulo_operator; // *, /, //, %
+precedence right power_operator; // ^
+precedence right increment_operator, decrement_operator; // ++, --
+//ESTOS LOS PODEMOS REVISAR PARA VER SI LOS UNARIOS TAMBIÉN VAN
+
+
+
+// El start siempre después de los terminales y no terminales
+start with program;
+
+
+//Expresiones aritméticas
+unary_negative ::= minus_operator int_literal {: System.out.println("Negativo entero"); :}
+
+                |  minus_operator float_literal {: System.out.println("Negativo flotante"); :}
+                ;
+
+postfix_expression ::= identifier increment_operator {: System.out.println("Incremento (++)"); :}
+                    |  identifier decrement_operator {: System.out.println("Decremento (--)"); :}
+                    ;
+
+arithmetic_expression ::= arithmetic_expression plus_operator term 
+                          {: System.out.println("Suma (+)"); :}
+                       | arithmetic_expression plus_operator error
+                       {: System.err.println("Error:En la expresión aritmética después de +"); :}
+                       |  arithmetic_expression minus_operator term
+                          {: System.out.println("Resta (-)"); :}
+                       | arithmetic_expression minus_operator error
+                       {: System.err.println("Error:En la expresión aritmética después de -"); :}
+                       |  term
+                       ;
+
+term ::= term multiplication_operator power
+      {: System.out.println("Multiplicacion (*)"); :}
+      |  term division_operator power
+      {: System.out.println("Division (/)"); :}
+      |  term int_division_operator power
+      {: System.out.println("Division entera (//)"); :}
+      |  term modulo_operator power
+      {: System.out.println("Modulo (%)"); :}
+      |  power
+      ;
+
+power ::= factor power_operator power
+       {: System.out.println("Potencia (^)"); :}
+       |  factor
+       ;
+
+factor ::= left_parenthesis arithmetic_expression right_parenthesis
+        {: System.out.println("Expresion entre parentesis reconocida"); :}
+        |  arithmetic_operands
+        ;
+
+arithmetic_operands ::= int_literal
+                     |  float_literal
+                     |  identifier
+                     |  unary_negative
+                     |  postfix_expression
+                     |  array_access
+                     |  function_call
+                     ;
+
+// Expresiones logicas and, or y negación
+logical_expresion ::= logical_expresion_or;
+
+logical_expresion_or ::= logical_expresion_or or_operator logical_expresion_and
+            {: System.out.println("Operador logico OR (~)"); :}
+            |  logical_expresion_and
+            ;
+
+logical_expresion_and ::= logical_expresion_and and_operator logical_expresion_operands
+            {: System.out.println("Operador logico AND (@)"); :}
+            |  logical_expresion_operands
+            ;
+
+logical_expresion_operands ::= not_operator logical_factor
+                {: System.out.println("Operador logico NOT (Σ)"); :}
+                |  relational_expression
+                |  bool_literal
+                |  left_parenthesis logical_expresion right_parenthesis
+                |  left_parenthesis error right_parenthesis
+                {: System.err.println("Error logico entre parentesis"); :}
+                ;
+
+//Expresiones relacionales
+relational_expression ::= arithmetic_expression greater_operator arithmetic_expression
+            {: System.out.println("Mayor que (>) reconocido"); :}
+            |  arithmetic_expression less_operator arithmetic_expression
+            {: System.out.println("Menor que (<) reconocido"); :}
+            |  arithmetic_expression greater_equal_operator arithmetic_expression
+            {: System.out.println("Mayor o igual que (>=) reconocido"); :}
+            |  arithmetic_expression less_equal_operator arithmetic_expression
+            {: System.out.println("Menor o igual que (<=) reconocido"); :}
+            |  arithmetic_expression equal_operator arithmetic_expression
+            {: System.out.println("Igual que (==) reconocido"); :}
+            |  arithmetic_expression not_equal_operator arithmetic_expression
+            {: System.out.println("Diferente que (!=) reconocido"); :}
+            ;
+
+//Declaraciones// Char y string es agregado para una prueba
+declaration_values ::= arithmetic_expression | logical_expresion | CHAR_LITERAL | STRING_LITERAL;
+
+declaration ::= let_keyword int_keyword identifier delimiter
+             {: System.out.println("Declaracion: int sin valor"); :}
+             |  let_keyword float_keyword identifier delimiter
+             {: System.out.println("Declaracion: float sin valor"); :}
+             |  let_keyword bool_keyword identifier delimiter
+             {: System.out.println("Declaracion: bool sin valor"); :}
+             |  let_keyword char_keyword identifier delimiter
+             {: System.out.println("Declaracion: char sin valor"); :}
+             |  let_keyword string_keyword identifier delimiter
+             {: System.out.println("Declaracion: string sin valor"); :}
+             |  let_keyword int_keyword identifier assignment_operator declaration_values delimiter
+             {: System.out.println("Declaracion: int con valor"); :}
+             |  let_keyword float_keyword identifier assignment_operator declaration_values delimiter
+             {: System.out.println("Declaracion: float con valor"); :}
+             |  let_keyword bool_keyword identifier assignment_operator declaration_values delimiter
+             {: System.out.println("Declaracion: bool con valor"); :}
+             |  let_keyword char_keyword identifier assignment_operator declaration_values delimiter
+             {: System.out.println("Declaracion: char con valor"); :}
+             |  let_keyword string_keyword identifier assignment_operator declaration_values delimiter
+             {: System.out.println("Declaracion: string con valor"); :}
+             | error delimiter
+             {:
+               System.err.println("DECLARACION con error"); :}
+             ;
+
+
+//Reasignación
+reassignment ::= identifier assignment_operator declaration_values delimiter
+            {: System.out.println("Reasignación"); :}
+            | identifier assignment_operator error delimiter
+            {: System.err.println("Reasignación con error"); :}
+    ;
+
+
+// Array
+array_declaration ::= let_keyword int_keyword identifier left_block int_literal right_block delimiter
+                {: System.out.println("Declaracion: array int sin nada"); :}
+                | let_keyword int_keyword identifier error delimiter
+                {: System.err.println("Error en declaracion de array"); :}
+
+                |  let_keyword char_keyword identifier left_block int_literal right_block delimiter
+                {: System.out.println("Declaracion: array char sin nada"); :}
+
+                | let_keyword char_keyword identifier error delimiter
+                {: System.err.println("Error en declaracion de array"); :}
+
+                |  let_keyword int_keyword identifier left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.out.println("Declaracion: array int con valores"); :}
+
+                | let_keyword int_keyword identifier left_block int_literal right_block assignment_operator left_block error right_block delimiter
+                {: System.err.println("Error en inicializacion de array"); :}
+
+                |  let_keyword char_keyword identifier left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.out.println("Declaracion: arreglo char con valores"); :}
+                | let_keyword char_keyword identifier left_block int_literal right_block assignment_operator left_block error right_block delimiter
+                {: System.err.println("Error en inicializacion de array"); :}
+
+                ;
+
+array_literals ::= int_literal
+                 |  CHAR_LITERAL
+                 |  identifier
+                 |  array_literals comma_keyword int_literal
+                 |  array_literals comma_keyword CHAR_LITERAL
+                 |  array_literals comma_keyword identifier
+                 ;
+
+assign_elements_array ::= identifier left_block int_literal right_block assignment_operator arithmetic_expression delimiter
+                {: System.out.println("Asignacion a elemento de arreglo"); :}
+
+                |  identifier left_block int_literal right_block assignment_operator CHAR_LITERAL delimiter
+                {: System.out.println("Asignacion a elemento de arreglo"); :}
+                ;
+
+array_access ::= identifier left_block int_literal right_block;
+
+
+// input y output
+input_statement ::= input_keyword identifier delimiter
+                 {: System.out.println("Input reconocido"); :}
+                 |  input_keyword error delimiter
+                 {: System.err.println("Error en input"); :}
+                 ;
+
+
+output_statement ::= output_keyword identifier delimiter
+                {: System.out.println("Output id"); :}
+                  |  output_keyword int_literal delimiter
+                    {: System.out.println("Output entero"); :}
+                  |  output_keyword float_literal delimiter
+                    {: System.out.println("Output float"); :}
+                  |  output_keyword bool_literal delimiter
+                    {: System.out.println("Output booleano"); :}
+                  |  output_keyword CHAR_LITERAL delimiter
+                    {: System.out.println("Output char"); :}
+                  |  output_keyword STRING_LITERAL delimiter
+                    {: System.out.println("Output string"); :}
+                  | output_keyword error delimiter
+                  {: System.err.println("Error en output"); :}
+                  ;
+
+//Decide of
+decide_of ::= decide_of_keyword left_parenthesis logical_expresion right_parenthesis block
+              {: System.out.println("decide of normal"); :}
+           |  decide_of_keyword left_parenthesis logical_expresion right_parenthesis block elif_list
+           {: System.out.println("decide of con elif"); :}
+           |  decide_of_keyword left_parenthesis logical_expresion right_parenthesis block else_part
+              {: System.out.println("decide of con else"); :}          
+           |  decide_of_keyword left_parenthesis logical_expresion right_parenthesis block elif_list else_part
+              {: System.out.println("decide of con elif y else"); :}
+            | decide_of_keyword left_parenthesis error right_parenthesis block
+           {: System.err.println("Error en condicion de decide of"); :}
+           ;
+
+elif_list ::= elif_part
+           |  elif_list elif_part
+           ;
+
+elif_part ::= elseif_keyword left_parenthesis logical_expresion right_parenthesis block
+           {: System.out.println("elif"); :};
+
+else_part ::= else_keyword block
+           {: System.out.println("else"); :}
+;
+
+//Loop
+loop ::= loop_keyword loop_content exit_when_keyword logical_expresion delimiter end_loop_$_keyword
+      {: System.out.println("Loop"); :}
+      | loop_keyword error end_loop_$_keyword
+      {: System.err.println("Error en contenido de loop"); :};
+
+loop_content ::= statement
+              |  break_statement
+              |  loop_content statement
+              |  loop_content break_statement
+              ;
+
+break_statement ::= break_keyword delimiter
+                 {: System.out.println("break"); :}
+;
+
+//For
+for_loop ::= for_keyword left_parenthesis declaration step_keyword int_literal to_keyword int_literal right_parenthesis do_keyword block
+        {: System.out.println("for loop int to"); :}
+          |  for_keyword left_parenthesis declaration step_keyword int_literal downto_keyword int_literal right_parenthesis do_keyword block
+        {: System.out.println("for loop int downto"); :}
+          |  for_keyword left_parenthesis declaration step_keyword float_literal to_keyword float_literal right_parenthesis do_keyword block
+        {: System.out.println("for loop float to"); :}
+          |  for_keyword left_parenthesis declaration step_keyword float_literal downto_keyword float_literal right_parenthesis do_keyword block
+        {: System.out.println("for loop float downto"); :}  
+          | for_keyword left_parenthesis error right_parenthesis do_keyword block
+          {: 
+          System.err.println("Error en condicion de for")
+          :}
+        ;
+
+//Funciones
+function ::= 
+          // Solo para enteros 
+          int_keyword identifier left_parenthesis right_parenthesis block
+            {: System.out.println("funcion int sin parámetros"); :}
+          |  int_keyword identifier left_parenthesis params right_parenthesis block
+            {: System.out.println("funcion int con parámetros"); :}
+          |  int_keyword identifier left_parenthesis error right_parenthesis block
+          {: System.err.println("ERROR en parámetros de función int"); :}
+          
+          // Solo para flotantes
+          |  float_keyword identifier left_parenthesis right_parenthesis block
+            {: System.out.println("funcion float sin parámetros"); :}
+          |  float_keyword identifier left_parenthesis params right_parenthesis block
+            {: System.out.println("funcion float con parámetros"); :}
+          |  float_keyword identifier left_parenthesis error right_parenthesis block
+          {: System.err.println("ERROR en parámetros de función float"); :}
+          
+          // Solo para booleanos
+          |  bool_keyword identifier left_parenthesis right_parenthesis block
+            {: System.out.println("funcion bool sin parámetros"); :}
+          |  bool_keyword identifier left_parenthesis params right_parenthesis block
+            {: System.out.println("funcion bool con parámetros"); :}
+          |  bool_keyword identifier left_parenthesis error right_parenthesis block
+          {: System.err.println("ERROR en parámetros de función bool"); :}
+          
+          // Solo para char 
+          |  char_keyword identifier left_parenthesis right_parenthesis block
+            {: System.out.println("funcion char sin parámetros"); :}
+          |  char_keyword identifier left_parenthesis params right_parenthesis block
+            {: System.out.println("funcion char con parámetros"); :}
+          |  char_keyword identifier left_parenthesis error right_parenthesis block
+          {: System.err.println("ERROR en parámetros de función char"); :}
+          
+          // Solo para string 
+          |  string_keyword identifier left_parenthesis right_parenthesis block
+            {: System.out.println("funcion string sin parámetros"); :}
+          |  string_keyword identifier left_parenthesis params right_parenthesis block
+            {: System.out.println("funcion string con parámetros"); :}
+          |  string_keyword identifier left_parenthesis error right_parenthesis block
+          {: System.err.println("ERROR en parámetros de función string"); :}
+          ;
+
+
+
+
+params ::= param params_tail;
+
+params_tail ::= /* empty */
+             |  comma_keyword param params_tail
+             ;
+
+param ::= int_keyword identifier
+       |  float_keyword identifier
+       |  bool_keyword identifier
+       |  char_keyword identifier
+       |  string_keyword identifier
+       ;
+
+return_statement ::= return_keyword delimiter
+                  {: System.out.println("return vacio"); :}
+                  |  return_keyword arithmetic_expression delimiter
+                  {: System.out.println("return expresion aritmetica"); :}
+                  |  return_keyword logical_expresion delimiter
+                  {: System.out.println("return expresion logica"); :}
+                  ;
+
+function_call ::= identifier left_parenthesis right_parenthesis
+               {: System.out.println("Llamada a funcion sin argumentos"); :}
+               |  identifier left_parenthesis args right_parenthesis
+               {: System.out.println("Llamada a funcion con argumentos"); :}
+               ;
+
+args ::= int_literal args_tail
+      |  float_literal args_tail
+      |  identifier args_tail
+      |  array_access args_tail
+      ;
+
+args_tail ::= /* empty */
+           |  comma_keyword int_literal args_tail
+           |  comma_keyword float_literal args_tail
+           |  comma_keyword identifier args_tail
+           |  comma_keyword array_access args_tail
+           ;
+
+//Bloques de código y statemets
+block ::= left_block statements right_block
+        {: System.out.println("bloque con statement"); :}
+       |  left_block right_block
+         {: System.out.println("bloque vacio"); :}
+       |  left_block error right_block
+       {: System.err.println("bloque con error"); :}
+       ;
+
+statements ::= statement
+            |  statements statement
+            ;
+
+statement ::= declaration
+           |  reassignment
+           |  array_declaration
+           |  assign_elements_array
+           |  input_statement
+           |  output_statement
+           |  decide_of
+           |  loop
+           |  for_loop
+           |  return_statement
+           ;
+
+// Variables globales
+global_variables ::= /* empty */
+                  |  global_variables declaration
+                  ;
+
+//Programa principal
+principal ::= void_keyword principal_keyword left_parenthesis right_parenthesis block
+           {: System.out.println("\n>> FUNCION PRINCIPAL reconocida"); :}
+           ;
+
+//Funciones agrupadas
+functions ::= /* empty */
+           |  functions function
+           ;
+
+
+//Símbolo inicial
+program ::= global_variables principal functions
+         {: System.out.println("\n========== PROGRAMA COMPLETO VALIDADO ==========\n"); :};
