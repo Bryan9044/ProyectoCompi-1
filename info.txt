@@ -1,0 +1,18 @@
+Nombre del curso:
+	Compiladores e Interpretes
+
+Número de Semestre y Año Lectivo:
+	II-2025
+
+Nombre de los Estudiantes y Carnet:
+	Bryan Londoño Marchena - 202233102
+	Dylan Rodríguez Chavarría - 2023161347
+
+Número de Proyecto Programado:
+	1ero
+
+Fecha de Entrega:
+	6/10/2025
+
+Estatus de la Entrega:
+	Regular
