@@ -108,35 +108,50 @@ public class JflexCup {
     
     public static void testearParser(String archivoEntrada) {
         try {
-            System.out.println("    Probando parser o sea CUP");
-            
-            System.out.println("Archivo de entrada: " + archivoEntrada);
-            System.out.println();
-            
+            System.out.println("═════════════════════════════════════════");
+            System.out.println("    PRUEBA DEL PARSER CUP              ");
+            System.out.println("═════════════════════════════════════════\n");
+            System.out.println("Archivo: " + archivoEntrada + "\n");
+
+            // REINICIAR CONTADORES DE ERRORES
+            Lexer.errorCount = 0;
+            parser.syntaxErrors = 0;
+
             // Crear lexer con encoding UTF-8
             FileInputStream fis = new FileInputStream(archivoEntrada);
             InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-            Lexer lexer = new Lexer(reader, "C:/Users/bryan/Documents/Analizador/src/codigo/prueba.txt");
-            
-            // Crear parser
-            System.out.println("--- INICIANDO ANALISIS SINTACTICO ---\n");
-            parser parser = new parser(lexer);
-            
-            // Parsear
-            Symbol resultado = parser.parse();
-            
-            // Si llega aquí, fue exitoso
-            System.out.println("     PARSER FUNCIONA CORRECTAMENTE ");
-            System.out.println("Sintaxis valida");
-            System.out.println("Estructura correcta");
-            System.out.println("\nTokens guardados en: tokens_test.txt");
-            
+            String archivoSalida = "C:/Users/bryan/Documents/Analizador/src/codigo/tokens_output.txt";
+            Lexer lexer = new Lexer(reader, archivoSalida);
+
+            System.out.println(" Iniciando análisis...\n");
+            System.out.println("--- ANÁLISIS LÉXICO-SINTÁCTICO ---\n");
+
+            // Crear y ejecutar parser
+            parser parser_obj = new parser(lexer);
+            parser_obj.parse();
+
+            // Cerrar el log del lexer
+            lexer.closeLog();
+
+            System.out.println("\n Análisis completado");
+            System.out.println(" Tokens guardados en: " + archivoSalida);
+
         } catch (FileNotFoundException e) {
-            System.err.println("\n ERROR: No se encontro el archivo: " + archivoEntrada);
+            System.err.println("\n ERROR: No se encontró el archivo: " + archivoEntrada);
+            System.err.println("   Verifica que la ruta sea correcta\n");
         } catch (Exception e) {
-            System.err.println("     ERROR EN EL PARSER");
-            System.err.println(e.getMessage());
-            e.printStackTrace();
+            System.err.println("\n═════════════════════════════════════════");
+            System.err.println(" ERROR DURANTE EL ANÁLISIS");
+            System.err.println("═════════════════════════════════════════");
+            System.err.println("\n" + e.getMessage());
+
+            // Mostrar stack trace si necesitas más detalles
+            // e.printStackTrace();
+
+            // Veredicto en caso de error fatal
+            int totalErrores = Lexer.errorCount + parser.syntaxErrors;
+            System.err.println("\n RESULTADO: La gramática NO puede generar el código");
+            System.err.println("   Error fatal (Total errores: " + totalErrores + ")\n");
         }
     }
 

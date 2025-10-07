@@ -2,10 +2,7 @@ package codigo;
 import java_cup.runtime.*;
 
 parser code {:
-    public static int syntaxErrors = 0;
-
     public void syntax_error(Symbol s) {
-        syntaxErrors++;
         System.err.println("\n ERROR DE SINTAXIS:");
         System.err.println("   Linea: " + (s.left+1));
         System.err.println("   Token inesperado: " + s.value);
@@ -19,21 +16,6 @@ parser code {:
         System.err.println("\nERROR FATAL: No se puede recuperar del error de sintaxis");
         throw new Exception("Error de sintaxis irrecuperable en linea " + (s.left+1));
     }
-
-    public void sePuedeoNo(){
-        int lexerErrors = codigo.Lexer.errorCount; 
-        
-        if (lexerErrors == 0 && syntaxErrors == 0) {
-            System.out.println("La gramatica si puede ser generada");
-        }
-        else {
-            System.out.println("La gramatica no puede ser generada");
-            System.out.println("Numero de errores en el lexer: " + lexerErrors);     // ← CAMBIO AQUÍ
-            System.out.println("Numero de errores en el parser: " + syntaxErrors);
-        }
-    }
-
-
 :};
 
 // TERMINALES
@@ -192,83 +174,7 @@ postfix_expression ::= identifier increment_operator {: System.out.println("Incr
                     |  identifier decrement_operator {: System.out.println("Decremento (--)"); :}
                     ;
 
-arithmetic_expression ::= arithmetic_expression plus_operator term 
-                          {: System.out.println("Suma (+)"); :}
-                       | arithmetic_expression plus_operator error
-                       {: System.err.println("Error:En la expresión aritmética después de +"); :}
-                       |  arithmetic_expression minus_operator term
-                          {: System.out.println("Resta (-)"); :}
-                       | arithmetic_expression minus_operator error
-                       {: System.err.println("Error:En la expresión aritmética después de -"); :}
-                       |  term
-                       ;
 
-term ::= term multiplication_operator power
-      {: System.out.println("Multiplicacion (*)"); :}
-      |  term division_operator power
-      {: System.out.println("Division (/)"); :}
-      |  term int_division_operator power
-      {: System.out.println("Division entera (//)"); :}
-      |  term modulo_operator power
-      {: System.out.println("Modulo (%)"); :}
-      |  power
-      ;
-
-power ::= factor power_operator power
-       {: System.out.println("Potencia (^)"); :}
-       |  factor
-       ;
-
-factor ::= left_parenthesis arithmetic_expression right_parenthesis
-        {: System.out.println("Expresion entre parentesis reconocida"); :}
-        |  arithmetic_operands
-        ;
-
-arithmetic_operands ::= int_literal
-                     |  float_literal
-                     |  identifier
-                     |  unary_negative
-                     |  postfix_expression
-                     |  array_access
-                     |  function_call
-                     ;
-
-// Expresiones logicas and, or y negación
-logical_expresion ::= logical_expresion_or;
-
-logical_expresion_or ::= logical_expresion_or or_operator logical_expresion_and
-            {: System.out.println("Operador logico OR (~)"); :}
-            |  logical_expresion_and
-            ;
-
-logical_expresion_and ::= logical_expresion_and and_operator logical_expresion_operands
-            {: System.out.println("Operador logico AND (@)"); :}
-            |  logical_expresion_operands
-            ;
-
-logical_expresion_operands ::= not_operator logical_factor
-                {: System.out.println("Operador logico NOT (Σ)"); :}
-                |  relational_expression
-                |  bool_literal
-                |  left_parenthesis logical_expresion right_parenthesis
-                |  left_parenthesis error right_parenthesis
-                {: System.err.println("Error logico entre parentesis"); :}
-                ;
-
-//Expresiones relacionales
-relational_expression ::= arithmetic_expression greater_operator arithmetic_expression
-            {: System.out.println("Mayor que (>)"); :}
-            |  arithmetic_expression less_operator arithmetic_expression
-            {: System.out.println("Menor que (<)"); :}
-            |  arithmetic_expression greater_equal_operator arithmetic_expression
-            {: System.out.println("Mayor o igual que (>=)"); :}
-            |  arithmetic_expression less_equal_operator arithmetic_expression
-            {: System.out.println("Menor o igual que (<=)"); :}
-            |  arithmetic_expression equal_operator arithmetic_expression
-            {: System.out.println("Igual que (==)"); :}
-            |  arithmetic_expression not_equal_operator arithmetic_expression
-            {: System.out.println("Diferente que (!=)"); :}
-            ;
 
 //Declaraciones// Char y string es agregado para una prueba
 declaration_values ::= arithmetic_expression | logical_expresion | CHAR_LITERAL | STRING_LITERAL;
@@ -689,7 +595,5 @@ functions ::= /* empty */
 
 //Símbolo inicial
 program ::= global_variables principal functions
-         {: System.out.println("\n========== PROGRAMA COMPLETO VALIDADO ==========\n"); 
-         parser.sePuedeoNo();
-         :}
+         {: System.out.println("\n========== PROGRAMA COMPLETO VALIDADO ==========\n"); :}
          ;

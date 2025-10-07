@@ -1,11 +1,9 @@
 let int x = 5$
-let float pi = $
+let int y = 3
 let bool activo = True$
-let char letra = 'A'$
-let string nombre = "Juan"$
 
 void principal є э ¿
-    let int y = 10$
+    let int y = 10
     let int z = x + y$
     
     output x$

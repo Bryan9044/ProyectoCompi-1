@@ -412,7 +412,7 @@ public class Lexer implements java_cup.runtime.Scanner {
   /* user code: */
     private PrintWriter logWriter;
     private ArrayList<String> errores = new ArrayList<>();
-    private int errorCount = 0;
+    public static int errorCount = 0;
 
     //Constructor el cual lee el código fuente y escribe un 
     //reporte de tokens con su token,lexema,linea y columna
