@@ -10,13 +10,10 @@ package codigo;
  */
 public class Principal {
     public static void main(String[] args)throws Exception{
-        //String ruta = "C:/Users/dylan/OneDrive/Documentos/NetBeansProjects/Analizador/src/codigo/Lexer.flex";
+        String basePath = System.getProperty("user.dir");
+        String rutaTxt = basePath + "/src/codigo/pruebaParser.txt";
         
         //JflexCup.generateFiles();
-        JflexCup.probarParser("C:/Users/dylan/OneDrive - Estudiantes ITCR/Compiladores/Proyectos/Primer Proyecto/ProyectoCompi-1/Analizador/src/codigo/pruebaParser.txt");
-        //JflexCup.test();
+        JflexCup.probarParser(rutaTxt);
     }
-    
-    
-    
 }

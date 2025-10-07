@@ -2,7 +2,10 @@ package codigo;
 import java_cup.runtime.*;
 
 parser code {:
+    public static int syntaxErrors = 0;
+
     public void syntax_error(Symbol s) {
+        syntaxErrors++;
         System.err.println("\n ERROR DE SINTAXIS:");
         System.err.println("   Linea: " + (s.left+1));
         System.err.println("   Token inesperado: " + s.value);
@@ -16,6 +19,21 @@ parser code {:
         System.err.println("\nERROR FATAL: No se puede recuperar del error de sintaxis");
         throw new Exception("Error de sintaxis irrecuperable en linea " + (s.left+1));
     }
+
+    public void sePuedeoNo(){
+        int lexerErrors = codigo.Lexer.errorCount; 
+        
+        if (lexerErrors == 0 && syntaxErrors == 0) {
+            System.out.println("La gramatica si puede ser generada");
+        }
+        else {
+            System.out.println("La gramatica no puede ser generada");
+            System.out.println("Numero de errores en el lexer: " + lexerErrors); 
+            System.out.println("Numero de errores en el parser: " + syntaxErrors);
+        }
+    }
+
+
 :};
 
 // TERMINALES
@@ -163,7 +181,6 @@ start with program;
 
 //Expresiones aritméticas
 unary_negative ::= minus_operator int_literal {: System.out.println("Negativo entero"); :}
-
                 |  minus_operator float_literal {: System.out.println("Negativo flotante"); :}
                 ;
 
@@ -268,6 +285,74 @@ declaration ::= let_keyword int_keyword identifier delimiter
              | error delimiter
              {:
                System.err.println("DECLARACION con error"); :}
+             | let_keyword error identifier delimiter
+             {: System.err.println("No declaro el tipo error"); :}
+             | let_keyword int_keyword error delimiter
+             {: System.err.println("No declaro el id error"); :}
+             | let_keyword float_keyword error delimiter
+             {: System.err.println("No declaro el id error"); :}
+             | let_keyword bool_keyword error delimiter
+             {: System.err.println("No declaro el id error"); :}
+            | let_keyword char_keyword error delimiter
+            {: System.err.println("No declaro el id error"); :}
+            | let_keyword string_keyword error delimiter
+            {: System.err.println("No declaro el id error"); :}
+
+            
+            | let_keyword int_keyword identifier error 
+            {: System.err.println("Error falta el delimitador"); :} 
+            | let_keyword float_keyword identifier error
+            {: System.err.println("Error falta el delimitador"); :}
+            | let_keyword bool_keyword identifier error
+            {: System.err.println("Error falta el delimitador"); :}
+            | let_keyword int_keyword identifier assignment_operator declaration_values error
+            {: System.err.println("Error falta el delimitador"); :}
+            | let_keyword float_keyword identifier assignment_operator declaration_values error
+            {: System.err.println("Error falta el delimitador"); :}
+            | let_keyword bool_keyword identifier assignment_operator declaration_values error
+            {: System.err.println("Error falta el delimitador"); :}
+            | let_keyword char_keyword identifier assignment_operator declaration_values error
+            {: System.err.println("Error falta el delimitador"); :}
+            | let_keyword string_keyword identifier assignment_operator declaration_values error
+            {: System.err.println("Error falta el delimitador"); :}
+
+            | let_keyword error identifier assignment_operator declaration_values delimiter
+            {: System.err.println("Error falta el tipo"); :}
+
+             | error int_keyword identifier delimiter 
+             {: System.err.println("Error falta el let"); :}
+             | error float_keyword identifier delimiter 
+             {: System.err.println("Error falta el let"); :}
+             | error bool_keyword identifier delimiter 
+             {: System.err.println("Error falta el let"); :}
+             | error char_keyword identifier delimiter 
+             {: System.err.println("Error falta el let"); :}
+             | error string_keyword identifier delimiter 
+             {: System.err.println("Error falta el let"); :}
+
+
+             |int_keyword identifier assignment_operator declaration_values delimiter
+             {: System.err.println("Error falta el let"); :}
+             |float_keyword identifier assignment_operator declaration_values delimiter
+             {: System.err.println("Error falta el let"); :}
+             |bool_keyword identifier assignment_operator declaration_values delimiter
+             {: System.err.println("Error falta el let"); :}
+             |char_keyword identifier assignment_operator declaration_values delimiter
+             {: System.err.println("Error falta el let"); :}
+             |string_keyword identifier assignment_operator declaration_values delimiter
+             {: System.err.println("Error falta el let"); :}
+
+            | let_keyword int_keyword identifier assignment_operator error delimiter
+            {: System.err.println("Error en inicializacion de int"); :}
+            | let_keyword float_keyword identifier assignment_operator error delimiter
+            {: System.err.println("Error en inicializacion de float"); :}
+            | let_keyword bool_keyword identifier assignment_operator error delimiter
+            {: System.err.println("Error en inicializacion de bool"); :}
+            | let_keyword char_keyword identifier assignment_operator error delimiter
+            {: System.err.println("Error en inicializacion de char"); :}
+            | let_keyword string_keyword identifier assignment_operator error delimiter
+            {: System.err.println("Error en inicializacion de string"); :}
+
              ;
 
 
@@ -275,7 +360,11 @@ declaration ::= let_keyword int_keyword identifier delimiter
 reassignment ::= identifier assignment_operator declaration_values delimiter
             {: System.out.println("Reasignación"); :}
             | identifier assignment_operator error delimiter
-            {: System.err.println("Reasignación con error"); :}
+            {: System.err.println("Reasignación con error, declare un valor"); :}
+            | error assignment_operator declaration_values delimiter
+            {: System.err.println("Reasignación con error, declare un id"); :}
+            | identifier assignment_operator declaration_values error
+            {: System.err.println("Reasignación con error, falta el delimitador"); :}
     ;
 
 
@@ -284,21 +373,74 @@ array_declaration ::= let_keyword int_keyword identifier left_block int_literal 
                 {: System.out.println("Declaracion: array int sin nada"); :}
                 | let_keyword int_keyword identifier error delimiter
                 {: System.err.println("Error en declaracion de array"); :}
+                | error int_keyword identifier left_block int_literal right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta let"); :}
+                | let_keyword error identifier left_block int_literal right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta tipo"); :}
+                | let_keyword int_keyword error left_block int_literal right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta id"); :}
+                | let_keyword int_keyword identifier left_block error right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta tamaño"); :}
+                | let_keyword int_keyword identifier left_block int_literal error delimiter
+                {: System.err.println("Error en declaracion de array, falta ?"); :}
+                | let_keyword int_keyword identifier error int_literal right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta ¿"); :}
+                | let_keyword int_keyword identifier left_block int_literal right_block error
+                {: System.err.println("Error en declaracion de array, falta delimitador"); :}
+
+
+
 
                 |  let_keyword char_keyword identifier left_block int_literal right_block delimiter
                 {: System.out.println("Declaracion: array char sin nada"); :}
-
+                | error char_keyword identifier left_block int_literal right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta let"); :}
+                | let_keyword char_keyword error left_block int_literal right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta id"); :}
+                | let_keyword char_keyword identifier left_block error right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta tamaño"); :}
+                | let_keyword char_keyword identifier left_block int_literal error delimiter
+                {: System.err.println("Error en declaracion de array, falta ?"); :}
+                | let_keyword char_keyword identifier error int_literal right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta ¿"); :}
+                | let_keyword char_keyword identifier left_block int_literal right_block error
+                {: System.err.println("Error en declaracion de array, falta delimitador"); :}
                 | let_keyword char_keyword identifier error delimiter
                 {: System.err.println("Error en declaracion de array"); :}
 
                 |  let_keyword int_keyword identifier left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
                 {: System.out.println("Declaracion: array int con valores"); :}
-
+                | error int_keyword identifier left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta let"); :}
+                | let_keyword error identifier left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta tipo"); :}
+                | let_keyword int_keyword error left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta id"); :}
+                | let_keyword int_keyword identifier left_block error right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta tamaño"); :}
+                | let_keyword int_keyword identifier left_block int_literal error assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta ?"); :}
+                | let_keyword int_keyword identifier error int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta ¿"); :}
+                | let_keyword int_keyword identifier left_block int_literal right_block assignment_operator left_block array_literals right_block error
+                {: System.err.println("Error en declaracion de array, falta delimitador"); :}
+    
                 | let_keyword int_keyword identifier left_block int_literal right_block assignment_operator left_block error right_block delimiter
                 {: System.err.println("Error en inicializacion de array"); :}
 
                 |  let_keyword char_keyword identifier left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
                 {: System.out.println("Declaracion: arreglo char con valores"); :}
+                | error char_keyword identifier left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta let"); :}
+                | let_keyword char_keyword error left_block int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta id"); :}
+                | let_keyword char_keyword identifier left_block error right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta tamaño"); :}
+                | let_keyword char_keyword identifier left_block int_literal error assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta ?"); :}
+                | let_keyword char_keyword identifier error int_literal right_block assignment_operator left_block array_literals right_block delimiter
+                {: System.err.println("Error en declaracion de array, falta ¿"); :}
+
                 | let_keyword char_keyword identifier left_block int_literal right_block assignment_operator left_block error right_block delimiter
                 {: System.err.println("Error en inicializacion de array"); :}
 
@@ -327,6 +469,10 @@ input_statement ::= input_keyword identifier delimiter
                  {: System.out.println("Input reconocido"); :}
                  |  input_keyword error delimiter
                  {: System.err.println("Error en input"); :}
+                 | error input_keyword identifier delimiter
+                 {: System.err.println("No se declaro el input"); :}
+                 | input_keyword identifier error
+                 {: System.err.println("Error falta el delimitador en input"); :}
                  ;
 
 
@@ -530,4 +676,6 @@ functions ::= /* empty */
 
 //Símbolo inicial
 program ::= global_variables principal functions
-         {: System.out.println("\n========== PROGRAMA COMPLETO VALIDADO ==========\n"); :};
+         {: System.out.println("\n========== PROGRAMA COMPLETO VALIDADO ==========\n"); 
+         parser.sePuedeoNo();
+         :};

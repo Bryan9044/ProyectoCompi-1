@@ -37,9 +37,7 @@ public class JflexCup {
     }
     
     private static void moveFile(String origen, String destino){
-        
         try {
-            // Mueve el archivo. Si ya existe en destino, lo reemplaza.
             Files.move(Paths.get(origen), Paths.get(destino), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Archivo movido con éxito!");
         } catch (IOException e) {
@@ -79,57 +77,9 @@ public class JflexCup {
         moveFile(rutaOriginalParser, rutaMoverParser);
     }
     
-    public static void test()throws Exception{
-        System.out.println("=== INICIANDO ANALISIS ===\n");
+    public static void probarParser(String archivoEntrada) {
         String basePath = System.getProperty("user.dir");
         
-        Lexer lexer = new Lexer(new FileReader(basePath + "/src/codigo/prueba.txt"));
-        parser p = new parser(lexer);
-        
-        System.out.println("Leyendo tokens...\n");
-        p.parse();
-        
-        System.out.println("\n=== ANALISIS COMPLETADO EXITOSAMENTE ===");
-    }
-    
-    public static void testearParser(String archivoEntrada) {
-        try {
-            String basePath = System.getProperty("user.dir");
-            System.out.println("    Probando parser o sea CUP");
-            
-            System.out.println("Archivo de entrada: " + archivoEntrada);
-            System.out.println();
-            
-            // Crear lexer con encoding UTF-8
-            FileInputStream fis = new FileInputStream(archivoEntrada);
-            InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-            Lexer lexer = new Lexer(reader, basePath + "/src/codigo/prueba.txt");
-            
-            // Crear parser
-            System.out.println("--- INICIANDO ANALISIS SINTACTICO ---\n");
-            parser parser = new parser(lexer);
-            
-            // Parsear
-            Symbol resultado = parser.parse();
-            
-            // Si llega aquí, fue exitoso
-            System.out.println("     PARSER FUNCIONA CORRECTAMENTE ");
-            System.out.println("Sintaxis valida");
-            System.out.println("Estructura correcta");
-            System.out.println("\nTokens guardados en: tokens_test.txt");
-            
-        } catch (FileNotFoundException e) {
-            System.err.println("\n ERROR: No se encontro el archivo: " + archivoEntrada);
-        } catch (Exception e) {
-            System.err.println("     ERROR EN EL PARSER");
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    
-    
-    public static void probarParser(String archivoEntrada) {
         System.out.println("║     PRUEBA DEL PARSER CUP              ║");
         System.out.println("\n Archivo: " + archivoEntrada);
         System.out.println("\n" + "=".repeat(45));
@@ -179,6 +129,8 @@ public class JflexCup {
             
             escribirEnArchivo(texto, "tablaDeSimbolos.txt");
             
+            //Mover el archivo
+            moveFile(basePath + "/tablaDeSimbolos.txt", basePath + "/src/codigo/tablaDeSimbolos.txt");
 
         } catch (FileNotFoundException e) {
             System.err.println("\n❌ ERROR: Archivo no encontrado");
