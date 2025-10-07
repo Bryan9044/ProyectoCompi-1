@@ -16,7 +16,7 @@ void principal є э ¿
     
     loop
         let int contador = 0$
-        exit when є contador > 10 э$
+        exit when є true == 10 э$
     end loop$
     
     
@@ -25,6 +25,9 @@ void principal є э ¿
     ?
     
     let int volatil = xє3, 3.5э$
+    
+    let bool a = true | 5 > true$
+
 ?
  
 

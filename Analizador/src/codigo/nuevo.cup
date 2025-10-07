@@ -89,7 +89,6 @@ non terminal factor;
 non terminal arithmetic_operands;
 
 // Expresiones lógicas y relacionales
-non terminal logical_expresion;
 non terminal logical_expresion_or;
 non terminal logical_expresion_and;
 non terminal logical_expresion_operands;
@@ -213,47 +212,38 @@ arithmetic_operands ::= int_literal
                      |  postfix_expression
                      |  array_access
                      |  function_call
+                     |  bool_literal
                      ;
 
 // Expresiones logicas and, or y negación
-logical_expresion ::= logical_expresion_or;
-
-logical_expresion_or ::= logical_expresion_or or_operator logical_expresion_and
-            {: System.out.println("Operador logico OR (~)"); :}
-            |  logical_expresion_and
-            ;
-
-logical_expresion_and ::= logical_expresion_and and_operator logical_expresion_operands
+logical_expresion_and ::= logical_expresion_and and_operator logical_expresion_or
             {: System.out.println("Operador logico AND (@)"); :}
-            |  logical_expresion_operands
+            |  logical_expresion_or
             ;
 
-logical_expresion_operands ::= not_operator logical_factor
-                {: System.out.println("Operador logico NOT (Σ)"); :}
-                |  relational_expression
-                |  bool_literal
-                |  left_parenthesis logical_expresion right_parenthesis
-                |  left_parenthesis error right_parenthesis
-                {: System.err.println("Error logico entre parentesis"); :}
-                ;
+logical_expresion_or ::= logical_expresion_or or_operator relational_expression
+            {: System.out.println("Operador logico OR (~)"); :}
+            |  relational_expression
 
+            ;
 //Expresiones relacionales
-relational_expression ::= arithmetic_expression greater_operator arithmetic_expression
+relational_expression ::= relational_expression greater_operator arithmetic_expression
             {: System.out.println("Mayor que (>) reconocido"); :}
-            |  arithmetic_expression less_operator arithmetic_expression
+            |  relational_expression less_operator arithmetic_expression
             {: System.out.println("Menor que (<) reconocido"); :}
-            |  arithmetic_expression greater_equal_operator arithmetic_expression
+            |  relational_expression greater_equal_operator arithmetic_expression
             {: System.out.println("Mayor o igual que (>=) reconocido"); :}
-            |  arithmetic_expression less_equal_operator arithmetic_expression
+            |  relational_expression less_equal_operator arithmetic_expression
             {: System.out.println("Menor o igual que (<=) reconocido"); :}
-            |  arithmetic_expression equal_operator arithmetic_expression
+            |  relational_expression equal_operator arithmetic_expression
             {: System.out.println("Igual que (==) reconocido"); :}
-            |  arithmetic_expression not_equal_operator arithmetic_expression
+            |  relational_expression not_equal_operator arithmetic_expression
             {: System.out.println("Diferente que (!=) reconocido"); :}
+	    | arithmetic_expression {: System.out.println("Expresión aritmética"); :}
             ;
 
 //Declaraciones// Char y string es agregado para una prueba
-declaration_values ::= arithmetic_expression | logical_expresion | CHAR_LITERAL | STRING_LITERAL;
+declaration_values ::= logical_expresion_and | CHAR_LITERAL | STRING_LITERAL;
 
 declaration ::= let_keyword int_keyword identifier delimiter
              {: System.out.println("Declaracion: int sin valor"); :}
@@ -357,13 +347,13 @@ output_statement ::= output_keyword identifier delimiter
                   ;
 
 //Decide of
-decide_of ::= decide_of_keyword left_parenthesis logical_expresion right_parenthesis block
+decide_of ::= decide_of_keyword left_parenthesis logical_expresion_and right_parenthesis block
               {: System.out.println("decide of normal"); :}
-           |  decide_of_keyword left_parenthesis logical_expresion right_parenthesis block elif_list
+           |  decide_of_keyword left_parenthesis logical_expresion_and right_parenthesis block elif_list
            {: System.out.println("decide of con elif"); :}
-           |  decide_of_keyword left_parenthesis logical_expresion right_parenthesis block else_part
+           |  decide_of_keyword left_parenthesis logical_expresion_and right_parenthesis block else_part
               {: System.out.println("decide of con else"); :}          
-           |  decide_of_keyword left_parenthesis logical_expresion right_parenthesis block elif_list else_part
+           |  decide_of_keyword left_parenthesis logical_expresion_and right_parenthesis block elif_list else_part
               {: System.out.println("decide of con elif y else"); :}
             | decide_of_keyword left_parenthesis error right_parenthesis block
            {: System.err.println("Error en condicion de decide of"); :}
@@ -373,7 +363,7 @@ elif_list ::= elif_part
            |  elif_list elif_part
            ;
 
-elif_part ::= elseif_keyword left_parenthesis logical_expresion right_parenthesis block
+elif_part ::= elseif_keyword left_parenthesis logical_expresion_and right_parenthesis block
            {: System.out.println("elif"); :};
 
 else_part ::= else_keyword block
@@ -381,7 +371,7 @@ else_part ::= else_keyword block
 ;
 
 //Loop
-loop ::= loop_keyword loop_content exit_when_keyword logical_expresion delimiter end_loop_$_keyword
+loop ::= loop_keyword loop_content exit_when_keyword logical_expresion_and delimiter end_loop_$_keyword
       {: System.out.println("Loop"); :}
       | loop_keyword error end_loop_$_keyword
       {: System.err.println("Error en contenido de loop"); :};
@@ -472,9 +462,7 @@ param ::= int_keyword identifier
 
 return_statement ::= return_keyword delimiter
                   {: System.out.println("return vacio"); :}
-                  |  return_keyword arithmetic_expression delimiter
-                  {: System.out.println("return expresion aritmetica"); :}
-                  |  return_keyword logical_expresion delimiter
+                  |  return_keyword logical_expresion_and delimiter
                   {: System.out.println("return expresion logica"); :}
                   ;
 
