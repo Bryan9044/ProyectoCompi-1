@@ -17,15 +17,19 @@ import java.util.ArrayList;
     private PrintWriter logWriter;
     private ArrayList<String> errores = new ArrayList<>();
     private int errorCount = 0;
+    private ArrayList<Token> tokens = new ArrayList<>();
 
     //Constructor el cual lee el código fuente y escribe un 
     //reporte de tokens con su token,lexema,linea y columna
-    public Lexer(Reader in, String outputFile) throws IOException {
+    public Lexer(Reader in, String outputFile, ArrayList<Token> tokens) throws IOException {
         this(in);
+        this.tokens = tokens; //Para guardarlos en el puntero y verlos desde el JFlexCup.java
         logWriter = new PrintWriter(new FileWriter(outputFile));
         logWriter.println("=== ANÁLISIS LÉXICO ===");
         logWriter.println("TOKEN\t\t\tLEXEMA\t\tLINEA\t\tCOLUMNA");
         logWriter.println("----------------------------------------");
+
+        
     }
     
     private Symbol symbol(int type) {
@@ -35,10 +39,13 @@ import java.util.ArrayList;
     // Este es el que eescribe en el archivo de log en general
     // por cada token con su respectivo nombre, lexema, línea y columna
     private Symbol symbol(int type, Object value) {
+
+    
         if (logWriter != null) {
             String tokenName = getTokenName(type);
             String lexeme = (value != null) ? value.toString() : "";
             logWriter.printf("%-25s\t%-15s\t%d\t%d%n", tokenName, lexeme, yyline + 1, yycolumn + 1);
+            tokens.add(new Token(tokenName, lexeme, yyline + 1, yycolumn + 1));
             logWriter.flush();
         }
         return new Symbol(type, yyline, yycolumn, value);

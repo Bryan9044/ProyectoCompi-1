@@ -1,8 +1,4 @@
 let int x = 5$
-let float pi$
-let bool activo = True$
-let char letra = 'A'$
-let string nombre = "Juan"$
 void principal є э ¿
     let int y = 10$
     let int z = x + y$
@@ -33,6 +29,7 @@ void principal є э ¿
  
 
 int x є int a, float f э¿
+    let float f$
     return a + f$
 ?
 
