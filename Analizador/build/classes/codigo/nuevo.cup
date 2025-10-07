@@ -91,8 +91,6 @@ non terminal arithmetic_operands;
 // Expresiones lógicas y relacionales
 non terminal logical_expresion_or;
 non terminal logical_expresion_and;
-non terminal logical_expresion_operands;
-non terminal logical_factor;
 non terminal relational_expression;
 
 // Declaraciones y sentencias
@@ -200,7 +198,7 @@ power ::= factor power_operator power
        |  factor
        ;
 
-factor ::= left_parenthesis arithmetic_expression right_parenthesis
+factor ::= left_parenthesis logical_expresion_and right_parenthesis
         {: System.out.println("Expresion entre parentesis reconocida"); :}
         |  arithmetic_operands
         ;
@@ -213,9 +211,11 @@ arithmetic_operands ::= int_literal
                      |  array_access
                      |  function_call
                      |  bool_literal
+                     |  not_operator logical_expresion_and
                      ;
 
 // Expresiones logicas and, or y negación
+
 logical_expresion_and ::= logical_expresion_and and_operator logical_expresion_or
             {: System.out.println("Operador logico AND (@)"); :}
             |  logical_expresion_or
@@ -476,6 +476,8 @@ args ::= int_literal args_tail
       |  float_literal args_tail
       |  identifier args_tail
       |  array_access args_tail
+      |  STRING_LITERAL
+      |  CHAR_LITERAL
       ;
 
 args_tail ::= /* empty */

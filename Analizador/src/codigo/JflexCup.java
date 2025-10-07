@@ -239,10 +239,8 @@ public class JflexCup {
             if(pila.size() < 1 && (tokenActual.nombre.equals("VOID") || tokenActual.nombre.equals("INT") || tokenActual.nombre.equals("FLOAT") || tokenActual.nombre.equals("BOOL") || tokenActual.nombre.equals("CHAR") || tokenActual.nombre.equals("STRING") || tokenActual.nombre.equals("PRINCIPAL")) ){
                 //Creo la tabla con el nombre de la función
                 if(tokenActual.nombre.equals("PRINCIPAL")){
-                    System.out.println("Tabla actual: Principal");
                     tablaActual = new TablaDeSimbolos("Principal");
                 }else{
-                    System.out.println("Nombre tabla: " +tokens.get(i+1).lexema);
                     tablaActual = new TablaDeSimbolos(tokens.get(i+1).lexema);
                 }
                 
